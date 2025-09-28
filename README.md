@@ -1,23 +1,72 @@
-# ld2450_ble
-Home assistant integration for LD2450 presence sensor ove Bluetooth
+# LD2450 BLE Integration for Home Assistant
 
-Home Assistant has an official integration for Hi-Link LD2410 distance sensor over Bluetooth (https://www.home-assistant.io/integrations/ld2410_ble/)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 
-This is based on a python class managing sensor connection and data (https://github.com/930913/ld2410-ble)
+A Home Assistant integration for the Hi-Link LD2450 24GHz mmWave Radar Presence Sensor over Bluetooth LE.
 
-The newer LD2450 also publishes data over bluetooth, so i modified the python class and the integration code to manage it.
+This integration extends Home Assistant's native Bluetooth integration capabilities to fully support the LD2450 radar sensor, including all configuration options and sensor data.
 
-Eventually, it works
+## Features
 
-The sensor only outputs coordinates of up to three targets and their speed, but those are not much useful so a big part of the available sensors in HA are calculated (distance, angle, moving, presence..)
+- Automatic discovery and configuration via Bluetooth
+- Real-time presence detection with multi-target support
+- Zone configuration with up to 3 configurable zones
+- Comprehensive sensor data including target coordinates, speed, distance, and angle
+- Full control over sensor settings through the Home Assistant interface
+
+## Installation
+
+### HACS Installation (Preferred)
+
+1. Make sure you have [HACS](https://hacs.xyz) installed in your Home Assistant instance
+2. Add this repository as a custom repository in HACS:
+   - Click the menu icon in the top right of HACS
+   - Select "Custom repositories"
+   - Add `jb1228/ld2450_ble` as the repository URL
+   - Select "Integration" as the category
+3. Click "Download" on the LD2450 BLE integration
+4. Restart Home Assistant
+
+### Manual Installation
+
+1. Download the latest release from this repository
+2. Copy the `custom_components/ld2450_ble` folder to your Home Assistant's `custom_components` directory
+3. Restart Home Assistant
+
+## Configuration
+
+The integration supports automatic discovery of LD2450 devices:
+
+1. Go to Settings -> Devices & Services
+2. Click "Add Integration"
+3. Search for "LD2450 BLE"
+4. The integration will automatically discover any LD2450 devices broadcasting over Bluetooth
+5. Follow the prompts to complete setup
+
+## Available Entities
+
+### Sensors
+- Target coordinates (X,Y) for up to 3 targets
+- Target speed
+- Calculated distance and angle
+- Movement and presence status
+
+### Configuration Entities
+- Multi-target mode switch
+- Zone mode selector (Off, AND, OR)
+- Zone coordinate configuration (up to 3 zones)
+- Reboot button
 
 ![image](https://github.com/MassiPi/ld2450_ble/assets/2384381/7c8f944a-35a3-4fd5-a7cb-4913463a8ff2)
 
-The LD2450 is also fully controllable over BLE, so i added switch (for multi-target mode), button (for reboot), select (for zone mode) and number slider (for up to 3 zones configuration).
-
 ![image](https://github.com/MassiPi/ld2450_ble/assets/2384381/38e1a29c-66a0-4be3-83dd-ece0a1f10fc4)
 
-I assume the code will be full of errors and could be written much better, but writing a custom integration in HA is a nightmare and this is far beyond what i thought i could do..
+## Credits
+
+This integration is based on:
+- Home Assistant's official [LD2410 BLE integration](https://www.home-assistant.io/integrations/ld2410_ble/)
+- Original Bluetooth protocol implementation from [930913/ld2410-ble](https://github.com/930913/ld2410-ble)
+- Modified and extended for LD2450 support by [MassiPI](https://github.com/MassiPI)
 
 As a bonus, there is the 3d model for a sensor case (just print it..) (5 parts: sensor box (with text), back plate, 3-pieces-support to allow solid positioning of the sensor)
 
