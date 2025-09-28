@@ -25,44 +25,52 @@ ACK_FW_VER_REGEX = b"\xFD\xFC\xFB\xFA\x0C\x00\xA0\x01" + b"(?P<ACK_FW_VER_RESULT
 CMD_GET_MAC = b"\xFD\xFC\xFB\xFA\x04\x00\xA5\x00\x01\x00\x04\x03\x02\x01"
 ACK_MAC_REGEX = b"\xFD\xFC\xFB\xFA\x0A\x00\xA5\x01" + b"(?P<ACK_MAC_RESULT>..)" + b"(?P<ACK_MAC_VAL>......)" + b"\x04\x03\x02\x01"
 
-CMD_AREA = b"\xFD\xFC\xFB\xFA\x02\x00\xC1\x00\x04\x03\x02\x01"
-ACK_AREA_REGEX = b"\xFD\xFC\xFB\xFA\x1E\x00\xC1\x01" + b"(?P<ACK_AREA_RESULT>..)" + b"(?P<ACK_AREA_MODE>..)" + b"(?P<ACK_AREA_ONE>........)" + b"(?P<ACK_AREA_TWO>........)" + b"(?P<ACK_AREA_THREE>........)" + b"\x04\x03\x02\x01"
+CMD_SET_ZONE_PRE = b"\xFD\xFC\xFB\xFA"
+CMD_SET_ZONE_POST = b"\x04\x03\x02\x01"
 
-CMD_SET_AREA_PRE = b"\xFD\xFC\xFB\xFA\x1C\x00\xC2\x00" #+2byte mode +3*8byte area config
-CMD_SET_AREA_POST = b"\x04\x03\x02\x01"
-ACK_SET_AREA_REGEX = b"\xFD\xFC\xFB\xFA\x04\x00\xC2\x01" + b"(?P<ACK_SET_AREA_RESULT>..)" + b"\x04\x03\x02\x01"
+CMD_ZONE = b"\xFD\xFC\xFB\xFA\x02\x00\x81\x00\x04\x03\x02\x01"
+ACK_ZONE_REGEX = b"\xFD\xFC\xFB\xFA\x04\x00\x81\x01" + b"(?P<ACK_ZONE_RESULT>..)" + b"\x04\x03\x02\x01"
+
+ACK_SET_ZONE_REGEX = b"\xFD\xFC\xFB\xFA\x04\x00\x81\x01" + b"(?P<ACK_SET_ZONE_RESULT>..)" + b"\x04\x03\x02\x01"
+
+CMD_ZONE = b"\xFD\xFC\xFB\xFA\x02\x00\xC1\x00\x04\x03\x02\x01"
+ACK_ZONE_REGEX = b"\xFD\xFC\xFB\xFA\x1E\x00\xC1\x01" + b"(?P<ACK_ZONE_RESULT>..)" + b"(?P<ACK_ZONE_TYPE>..)" + b"(?P<ACK_ZONE_ONE>........)" + b"(?P<ACK_ZONE_TWO>........)" + b"(?P<ACK_ZONE_THREE>........)" + b"\x04\x03\x02\x01"
+
+CMD_SET_ZONE_PRE = b"\xFD\xFC\xFB\xFA\x1C\x00\xC2\x00" #+2byte mode +3*8byte zone config
+CMD_SET_ZONE_POST = b"\x04\x03\x02\x01"
+ACK_SET_ZONE_REGEX = b"\xFD\xFC\xFB\xFA\x04\x00\xC2\x01" + b"(?P<ACK_SET_ZONE_RESULT>..)" + b"\x04\x03\x02\x01"
 
 frame_start = b"\xaa\xff\x03\x00"
-frame_target_one_x = b"(?P<target_one_x>..)"
-frame_target_one_y = b"(?P<target_one_y>..)"
-frame_target_one_s = b"(?P<target_one_s>..)"
-frame_target_one_r = b"(?P<target_one_r>..)"
+frame_target_1_x = b"(?P<target_1_x>..)"
+frame_target_1_y = b"(?P<target_1_y>..)"
+frame_target_1_s = b"(?P<target_1_s>..)"
+frame_target_1_r = b"(?P<target_1_r>..)"
 
-frame_target_two_x = b"(?P<target_two_x>..)"
-frame_target_two_y = b"(?P<target_two_y>..)"
-frame_target_two_s = b"(?P<target_two_s>..)"
-frame_target_two_r = b"(?P<target_two_r>..)"
+frame_target_2_x = b"(?P<target_2_x>..)"
+frame_target_2_y = b"(?P<target_2_y>..)"
+frame_target_2_s = b"(?P<target_2_s>..)"
+frame_target_2_r = b"(?P<target_2_r>..)"
 
-frame_target_three_x = b"(?P<target_three_x>..)"
-frame_target_three_y = b"(?P<target_three_y>..)"
-frame_target_three_s = b"(?P<target_three_s>..)"
-frame_target_three_r = b"(?P<target_three_r>..)"
+frame_target_3_x = b"(?P<target_3_x>..)"
+frame_target_3_y = b"(?P<target_3_y>..)"
+frame_target_3_s = b"(?P<target_3_s>..)"
+frame_target_3_r = b"(?P<target_3_r>..)"
 
 frame_end = b"\x55\xcc"
 
 frame_regex = (
     frame_start
-    + frame_target_one_x 
-    + frame_target_one_y
-    + frame_target_one_s
-    + frame_target_one_r
-    + frame_target_two_x 
-    + frame_target_two_y
-    + frame_target_two_s
-    + frame_target_two_r
-    + frame_target_three_x 
-    + frame_target_three_y
-    + frame_target_three_s
-    + frame_target_three_r
+    + frame_target_1_x 
+    + frame_target_1_y
+    + frame_target_1_s
+    + frame_target_1_r
+    + frame_target_2_x 
+    + frame_target_2_y
+    + frame_target_2_s
+    + frame_target_2_r
+    + frame_target_3_x 
+    + frame_target_3_y
+    + frame_target_3_s
+    + frame_target_3_r
     + frame_end
 )

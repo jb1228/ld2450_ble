@@ -37,11 +37,11 @@ from .const import (
     ACK_FW_VER_REGEX,
     CMD_GET_MAC,
     ACK_MAC_REGEX,
-    CMD_AREA,
-    ACK_AREA_REGEX,
-    CMD_SET_AREA_PRE,
-    CMD_SET_AREA_POST,
-    ACK_SET_AREA_REGEX,
+    CMD_ZONE,
+    ACK_ZONE_REGEX,
+    CMD_SET_ZONE_PRE,
+    CMD_SET_ZONE_POST,
+    ACK_SET_ZONE_REGEX,
     CMD_REBOOT,
     ACK_REBOOT_REGEX,
     frame_regex
@@ -117,43 +117,43 @@ class LD2450BLE:
         return self._config
 
     @property
-    def target_one_x(self) -> int:
-        return self._state.target_one_x
+    def target_1_x(self) -> int:
+        return self._state.target_1_x
     @property
-    def target_one_y(self) -> int:
-        return self._state.target_one_y
+    def target_1_y(self) -> int:
+        return self._state.target_1_y
     @property
-    def target_one_speed(self) -> int:
-        return self._state.target_one_speed
+    def target_1_speed(self) -> int:
+        return self._state.target_1_speed
     @property
-    def target_one_resolution(self) -> int:
-        return self._state.target_one_resolution
+    def target_1_resolution(self) -> int:
+        return self._state.target_1_resolution
 
     @property
-    def target_two_x(self) -> int:
-        return self._state.target_two_x
+    def target_2_x(self) -> int:
+        return self._state.target_2_x
     @property
-    def target_two_y(self) -> int:
-        return self._state.target_two_y
+    def target_2_y(self) -> int:
+        return self._state.target_2_y
     @property
-    def target_two_speed(self) -> int:
-        return self._state.target_two_speed
+    def target_2_speed(self) -> int:
+        return self._state.target_2_speed
     @property
-    def target_two_resolution(self) -> int:
-        return self._state.target_two_resolution
+    def target_2_resolution(self) -> int:
+        return self._state.target_2_resolution
 
     @property
-    def target_three_x(self) -> int:
-        return self._state.target_three_x
+    def target_3_x(self) -> int:
+        return self._state.target_3_x
     @property
-    def target_three_y(self) -> int:
-        return self._state.target_three_y
+    def target_3_y(self) -> int:
+        return self._state.target_3_y
     @property
-    def target_three_speed(self) -> int:
-        return self._state.target_three_speed
+    def target_3_speed(self) -> int:
+        return self._state.target_3_speed
     @property
-    def target_three_resolution(self) -> int:
-        return self._state.target_three_resolution
+    def target_3_resolution(self) -> int:
+        return self._state.target_3_resolution
 
     @property
     def target_mode(self) -> int:
@@ -168,44 +168,44 @@ class LD2450BLE:
         return self._config.mac_addr
 
     @property
-    def area_mode(self) -> int:
-        return self._config.area_mode
+    def zone_type(self) -> int:
+        return self._config.zone_type
     @property
-    def area_one_first_vertex_x(self) -> int:
-        return self._config.area_one_first_vertex_x
+    def zone_1_x1(self) -> int:
+        return self._config.zone_1_x1
     @property
-    def area_one_first_vertex_y(self) -> int:
-        return self._config.area_one_first_vertex_y
+    def zone_1_y1(self) -> int:
+        return self._config.zone_1_y1
     @property
-    def area_one_second_vertex_x(self) -> int:
-        return self._config.area_one_second_vertex_x
+    def zone_1_x2(self) -> int:
+        return self._config.zone_1_x2
     @property
-    def area_one_second_vertex_y(self) -> int:
-        return self._config.area_one_second_vertex_y
+    def zone_1_y2(self) -> int:
+        return self._config.zone_1_y2
     @property
-    def area_two_first_vertex_x(self) -> int:
-        return self._config.area_two_first_vertex_x
+    def zone_2_x1(self) -> int:
+        return self._config.zone_2_x1
     @property
-    def area_two_first_vertex_y(self) -> int:
-        return self._config.area_two_first_vertex_y
+    def zone_2_y1(self) -> int:
+        return self._config.zone_2_y1
     @property
-    def area_two_second_vertex_x(self) -> int:
-        return self._config.area_two_second_vertex_x
+    def zone_2_x2(self) -> int:
+        return self._config.zone_2_x2
     @property
-    def area_two_second_vertex_y(self) -> int:
-        return self._config.area_two_second_vertex_y
+    def zone_2_y2(self) -> int:
+        return self._config.zone_2_y2
     @property
-    def area_three_first_vertex_x(self) -> int:
-        return self._config.area_three_first_vertex_x
+    def zone_3_x1(self) -> int:
+        return self._config.zone_3_x1
     @property
-    def area_three_first_vertex_y(self) -> int:
-        return self._config.area_three_first_vertex_y
+    def zone_3_y1(self) -> int:
+        return self._config.zone_3_y1
     @property
-    def area_three_second_vertex_x(self) -> int:
-        return self._config.area_three_second_vertex_x
+    def zone_3_x2(self) -> int:
+        return self._config.zone_3_x2
     @property
-    def area_three_second_vertex_y(self) -> int:
-        return self._config.area_three_second_vertex_y
+    def zone_3_y2(self) -> int:
+        return self._config.zone_3_y2
 
     async def stop(self) -> None:
         """Stop the LD2410BLE."""
@@ -260,7 +260,7 @@ class LD2450BLE:
             await self._get_target_mode()
             await self._get_fw_ver()
             await self._get_mac()
-            await self._get_area()
+            await self._get_zone()
            
         else:
             _LOGGER.debug("Client is unexpectedly None")
@@ -352,19 +352,19 @@ class LD2450BLE:
                     target_mode = target_mode,
                     fw_ver = self._config.fw_ver,
                     mac_addr = self._config.mac_addr,
-                    area_mode = self._config.area_mode,
-                    area_one_first_vertex_x = self._config.area_one_first_vertex_x,
-                    area_one_first_vertex_y = self._config.area_one_first_vertex_y,
-                    area_one_second_vertex_x = self._config.area_one_second_vertex_x,
-                    area_one_second_vertex_y = self._config.area_one_second_vertex_y,
-                    area_two_first_vertex_x = self._config.area_two_first_vertex_x,
-                    area_two_first_vertex_y = self._config.area_two_first_vertex_y,
-                    area_two_second_vertex_x = self._config.area_two_second_vertex_x,
-                    area_two_second_vertex_y = self._config.area_two_second_vertex_y,
-                    area_three_first_vertex_x = self._config.area_three_first_vertex_x,
-                    area_three_first_vertex_y = self._config.area_three_first_vertex_y,
-                    area_three_second_vertex_x = self._config.area_three_second_vertex_x,
-                    area_three_second_vertex_y = self._config.area_three_second_vertex_y,
+                    zone_type = self._config.zone_type,
+                    zone_1_x1 = self._config.zone_1_x1,
+                    zone_1_y1 = self._config.zone_1_y1,
+                    zone_1_x2 = self._config.zone_1_x2,
+                    zone_1_y2 = self._config.zone_1_y2,
+                    zone_2_x1 = self._config.zone_2_x1,
+                    zone_2_y1 = self._config.zone_2_y1,
+                    zone_2_x2 = self._config.zone_2_x2,
+                    zone_2_y2 = self._config.zone_2_y2,
+                    zone_3_x1 = self._config.zone_3_x1,
+                    zone_3_y1 = self._config.zone_3_y1,
+                    zone_3_x2 = self._config.zone_3_x2,
+                    zone_3_y2 = self._config.zone_3_y2,
                 )
             msg = None
         
@@ -380,19 +380,19 @@ class LD2450BLE:
                     target_mode = self._config.target_mode,
                     fw_ver = fw_ver,
                     mac_addr = self._config.mac_addr,
-                    area_mode = self._config.area_mode,
-                    area_one_first_vertex_x = self._config.area_one_first_vertex_x,
-                    area_one_first_vertex_y = self._config.area_one_first_vertex_y,
-                    area_one_second_vertex_x = self._config.area_one_second_vertex_x,
-                    area_one_second_vertex_y = self._config.area_one_second_vertex_y,
-                    area_two_first_vertex_x = self._config.area_two_first_vertex_x,
-                    area_two_first_vertex_y = self._config.area_two_first_vertex_y,
-                    area_two_second_vertex_x = self._config.area_two_second_vertex_x,
-                    area_two_second_vertex_y = self._config.area_two_second_vertex_y,
-                    area_three_first_vertex_x = self._config.area_three_first_vertex_x,
-                    area_three_first_vertex_y = self._config.area_three_first_vertex_y,
-                    area_three_second_vertex_x = self._config.area_three_second_vertex_x,
-                    area_three_second_vertex_y = self._config.area_three_second_vertex_y,
+                    zone_type = self._config.zone_type,
+                    zone_1_x1 = self._config.zone_1_x1,
+                    zone_1_y1 = self._config.zone_1_y1,
+                    zone_1_x2 = self._config.zone_1_x2,
+                    zone_1_y2 = self._config.zone_1_y2,
+                    zone_2_x1 = self._config.zone_2_x1,
+                    zone_2_y1 = self._config.zone_2_y1,
+                    zone_2_x2 = self._config.zone_2_x2,
+                    zone_2_y2 = self._config.zone_2_y2,
+                    zone_3_x1 = self._config.zone_3_x1,
+                    zone_3_y1 = self._config.zone_3_y1,
+                    zone_3_x2 = self._config.zone_3_x2,
+                    zone_3_y2 = self._config.zone_3_y2,
                 )
             msg = None
  
@@ -408,19 +408,19 @@ class LD2450BLE:
                     target_mode = self._config.target_mode,
                     fw_ver = self._config.fw_ver,
                     mac_addr = mac_addr,
-                    area_mode = self._config.area_mode,
-                    area_one_first_vertex_x = self._config.area_one_first_vertex_x,
-                    area_one_first_vertex_y = self._config.area_one_first_vertex_y,
-                    area_one_second_vertex_x = self._config.area_one_second_vertex_x,
-                    area_one_second_vertex_y = self._config.area_one_second_vertex_y,
-                    area_two_first_vertex_x = self._config.area_two_first_vertex_x,
-                    area_two_first_vertex_y = self._config.area_two_first_vertex_y,
-                    area_two_second_vertex_x = self._config.area_two_second_vertex_x,
-                    area_two_second_vertex_y = self._config.area_two_second_vertex_y,
-                    area_three_first_vertex_x = self._config.area_three_first_vertex_x,
-                    area_three_first_vertex_y = self._config.area_three_first_vertex_y,
-                    area_three_second_vertex_x = self._config.area_three_second_vertex_x,
-                    area_three_second_vertex_y = self._config.area_three_second_vertex_y,
+                    zone_type = self._config.zone_type,
+                    zone_1_x1 = self._config.zone_1_x1,
+                    zone_1_y1 = self._config.zone_1_y1,
+                    zone_1_x2 = self._config.zone_1_x2,
+                    zone_1_y2 = self._config.zone_1_y2,
+                    zone_2_x1 = self._config.zone_2_x1,
+                    zone_2_y1 = self._config.zone_2_y1,
+                    zone_2_x2 = self._config.zone_2_x2,
+                    zone_2_y2 = self._config.zone_2_y2,
+                    zone_3_x1 = self._config.zone_3_x1,
+                    zone_3_y1 = self._config.zone_3_y1,
+                    zone_3_x2 = self._config.zone_3_x2,
+                    zone_3_y2 = self._config.zone_3_y2,
                 )
             msg = None
 
@@ -446,61 +446,61 @@ class LD2450BLE:
                 await self._get_target_mode()
             msg = None
             
-        msg = re.search(ACK_SET_AREA_REGEX, self._buf)
+        msg = re.search(ACK_SET_ZONE_REGEX, self._buf)
         if msg:
-            #SET_AREA. Check if command is good
-            if ( int.from_bytes(msg.group("ACK_SET_AREA_RESULT"),"little") > 0 ):
-                _LOGGER.error("SET_AREA query failed")
+            #SET_ZONE. Check if command is good
+            if ( int.from_bytes(msg.group("ACK_SET_ZONE_RESULT"),"little") > 0 ):
+                _LOGGER.error("SET_ZONE query failed")
             else:
-                _LOGGER.debug("SET_AREA query success")
+                _LOGGER.debug("SET_ZONE query success")
                 #calling update
-                await self._get_area()
+                await self._get_zone()
             msg = None
             
-        msg = re.search(ACK_AREA_REGEX, self._buf)
+        msg = re.search(ACK_ZONE_REGEX, self._buf)
         if msg:
-            #ACK to area query. Check if command is good
-            if ( int.from_bytes(msg.group("ACK_AREA_RESULT"),"little") > 0 ):
-                _LOGGER.error("Area query failed")
+            #ACK to zone query. Check if command is good
+            if ( int.from_bytes(msg.group("ACK_ZONE_RESULT"),"little") > 0 ):
+                _LOGGER.error("Zone query failed")
             else:
-                _LOGGER.debug("Area query success")
-                area_mode = int.from_bytes(msg.group("ACK_AREA_MODE"),"little")
+                _LOGGER.debug("Zone query success")
+                zone_type = int.from_bytes(msg.group("ACK_ZONE_MODE"),"little")
 
-                #first area
-                area_one_first_vertex_x = int.from_bytes(msg.group("ACK_AREA_ONE")[0:2],"little",signed=True)
-                area_one_first_vertex_y = int.from_bytes(msg.group("ACK_AREA_ONE")[2:4],"little",signed=True)
-                area_one_second_vertex_x = int.from_bytes(msg.group("ACK_AREA_ONE")[4:6],"little",signed=True)
-                area_one_second_vertex_y = int.from_bytes(msg.group("ACK_AREA_ONE")[6:8],"little",signed=True)
+                #first zone
+                zone_1_x1 = int.from_bytes(msg.group("ACK_ZONE_ONE")[0:2],"little",signed=True)
+                zone_1_y1 = int.from_bytes(msg.group("ACK_ZONE_ONE")[2:4],"little",signed=True)
+                zone_1_x2 = int.from_bytes(msg.group("ACK_ZONE_ONE")[4:6],"little",signed=True)
+                zone_1_y2 = int.from_bytes(msg.group("ACK_ZONE_ONE")[6:8],"little",signed=True)
 
-                #second area
-                area_two_first_vertex_x = int.from_bytes(msg.group("ACK_AREA_TWO")[0:2],"little",signed=True)
-                area_two_first_vertex_y = int.from_bytes(msg.group("ACK_AREA_TWO")[2:4],"little",signed=True)
-                area_two_second_vertex_x = int.from_bytes(msg.group("ACK_AREA_TWO")[4:6],"little",signed=True)
-                area_two_second_vertex_y = int.from_bytes(msg.group("ACK_AREA_TWO")[6:8],"little",signed=True)
+                #second zone
+                zone_2_x1 = int.from_bytes(msg.group("ACK_ZONE_TWO")[0:2],"little",signed=True)
+                zone_2_y1 = int.from_bytes(msg.group("ACK_ZONE_TWO")[2:4],"little",signed=True)
+                zone_2_x2 = int.from_bytes(msg.group("ACK_ZONE_TWO")[4:6],"little",signed=True)
+                zone_2_y2 = int.from_bytes(msg.group("ACK_ZONE_TWO")[6:8],"little",signed=True)
 
-                #third area
-                area_three_first_vertex_x = int.from_bytes(msg.group("ACK_AREA_THREE")[0:2],"little",signed=True)
-                area_three_first_vertex_y = int.from_bytes(msg.group("ACK_AREA_THREE")[2:4],"little",signed=True)
-                area_three_second_vertex_x = int.from_bytes(msg.group("ACK_AREA_THREE")[4:6],"little",signed=True)
-                area_three_second_vertex_y = int.from_bytes(msg.group("ACK_AREA_THREE")[6:8],"little",signed=True)
+                #third zone
+                zone_3_x1 = int.from_bytes(msg.group("ACK_ZONE_THREE")[0:2],"little",signed=True)
+                zone_3_y1 = int.from_bytes(msg.group("ACK_ZONE_THREE")[2:4],"little",signed=True)
+                zone_3_x2 = int.from_bytes(msg.group("ACK_ZONE_THREE")[4:6],"little",signed=True)
+                zone_3_y2 = int.from_bytes(msg.group("ACK_ZONE_THREE")[6:8],"little",signed=True)
 
                 self._config = LD2450BLEConfig(
                     target_mode = self._config.target_mode,
-                    fw_ver = self._config.fw_ver,
+                    fw_ver = fw_ver,
                     mac_addr = self._config.mac_addr,
-                    area_mode = area_mode,
-                    area_one_first_vertex_x = area_one_first_vertex_x,
-                    area_one_first_vertex_y = area_one_first_vertex_y,
-                    area_one_second_vertex_x = area_one_second_vertex_x,
-                    area_one_second_vertex_y = area_one_second_vertex_y,
-                    area_two_first_vertex_x = area_two_first_vertex_x,
-                    area_two_first_vertex_y = area_two_first_vertex_y,
-                    area_two_second_vertex_x = area_two_second_vertex_x,
-                    area_two_second_vertex_y = area_two_second_vertex_y,
-                    area_three_first_vertex_x = area_three_first_vertex_x,
-                    area_three_first_vertex_y = area_three_first_vertex_y,
-                    area_three_second_vertex_x = area_three_second_vertex_x,
-                    area_three_second_vertex_y = area_three_second_vertex_y,
+                    zone_type = zone_type,
+                    zone_1_x1 = zone_1_x1,
+                    zone_1_y1 = zone_1_y1,
+                    zone_1_x2 = zone_1_x2,
+                    zone_1_y2 = zone_1_y2,
+                    zone_2_x1 = zone_2_x1,
+                    zone_2_y1 = zone_2_y1,
+                    zone_2_x2 = zone_2_x2,
+                    zone_2_y2 = zone_2_y2,
+                    zone_3_x1 = zone_3_x1,
+                    zone_3_y1 = zone_3_y1,
+                    zone_3_x2 = zone_3_x2,
+                    zone_3_y2 = zone_3_y2,
                 )
             msg = None            
 
@@ -509,72 +509,72 @@ class LD2450BLE:
             #sensor data received
             self._buf = self._buf[msg.end() :]  # noqa: E203
 
-            target_one_x = int.from_bytes(msg.group("target_one_x"),"little")
-            if target_one_x > 2**15:
-                target_one_x = target_one_x - 2**15
+            target_1_x = int.from_bytes(msg.group("target_1_x"),"little")
+            if target_1_x > 2**15:
+                target_1_x = target_1_x - 2**15
             else:
-                target_one_x = - target_one_x
-            target_one_y = int.from_bytes(msg.group("target_one_y"),"little")
-            if target_one_y > 2**15:
-                target_one_y = target_one_y - 2**15
+                target_1_x = - target_1_x
+            target_1_y = int.from_bytes(msg.group("target_1_y"),"little")
+            if target_1_y > 2**15:
+                target_1_y = target_1_y - 2**15
             else:
-                target_one_y = - target_one_y
-            target_one_speed = int.from_bytes(msg.group("target_one_s"),"little")
-            if target_one_speed > 2**15:
-                target_one_speed = target_one_speed - 2**15
+                target_1_y = - target_1_y
+            target_1_speed = int.from_bytes(msg.group("target_1_s"),"little")
+            if target_1_speed > 2**15:
+                target_1_speed = target_1_speed - 2**15
             else:
-                target_one_speed = - target_one_speed
-            target_one_resolution = int.from_bytes(msg.group("target_one_r"),"little")
+                target_1_speed = - target_1_speed
+            target_1_resolution = int.from_bytes(msg.group("target_1_r"),"little")
 
-            target_two_x = int.from_bytes(msg.group("target_two_x"),"little")
-            if target_two_x > 2**15:
-                target_two_x = target_two_x - 2**15
+            target_2_x = int.from_bytes(msg.group("target_2_x"),"little")
+            if target_2_x > 2**15:
+                target_2_x = target_2_x - 2**15
             else:
-                target_two_x = - target_two_x
-            target_two_y = int.from_bytes(msg.group("target_two_y"),"little")
-            if target_two_y > 2**15:
-                target_two_y = target_two_y - 2**15
+                target_2_x = - target_2_x
+            target_2_y = int.from_bytes(msg.group("target_2_y"),"little")
+            if target_2_y > 2**15:
+                target_2_y = target_2_y - 2**15
             else:
-                target_two_y = - target_two_y
-            target_two_speed = int.from_bytes(msg.group("target_two_s"),"little")
-            if target_two_speed > 2**15:
-                target_two_speed = target_two_speed - 2**15
+                target_2_y = - target_2_y
+            target_2_speed = int.from_bytes(msg.group("target_2_s"),"little")
+            if target_2_speed > 2**15:
+                target_2_speed = target_2_speed - 2**15
             else:
-                target_two_speed = - target_two_speed
-            target_two_resolution = int.from_bytes(msg.group("target_two_r"),"little")
+                target_2_speed = - target_2_speed
+            target_2_resolution = int.from_bytes(msg.group("target_2_r"),"little")
 
-            target_three_x = int.from_bytes(msg.group("target_three_x"),"little")
-            if target_three_x > 2**15:
-                target_three_x = target_three_x - 2**15
+            target_3_x = int.from_bytes(msg.group("target_3_x"),"little")
+            if target_3_x > 2**15:
+                target_3_x = target_3_x - 2**15
             else:
-                target_three_x = - target_three_x
-            target_three_y = int.from_bytes(msg.group("target_three_y"),"little")
-            if target_three_y > 2**15:
-                target_three_y = target_three_y - 2**15
+                target_3_x = - target_3_x
+            target_3_y = int.from_bytes(msg.group("target_3_y"),"little")
+            if target_3_y > 2**15:
+                target_3_y = target_3_y - 2**15
             else:
-                target_three_y = - target_three_y
-            target_three_speed = int.from_bytes(msg.group("target_three_s"),"little")
-            if target_three_speed > 2**15:
-                target_three_speed = target_three_speed - 2**15
+                target_3_y = - target_3_y
+            target_3_speed = int.from_bytes(msg.group("target_3_s"),"little")
+            if target_3_speed > 2**15:
+                target_3_speed = target_3_speed - 2**15
             else:
-                target_three_speed = - target_three_speed
-            target_three_resolution = int.from_bytes(msg.group("target_three_r"),"little")
+                target_3_speed = - target_3_speed
+            target_3_resolution = int.from_bytes(msg.group("target_3_r"),"little")
 
             self._state = LD2450BLEState(
-                target_one_x = target_one_x,
-                target_one_y = target_one_y,
-                target_one_speed = target_one_speed,
-                target_one_resolution = target_one_resolution,
+                target_1_x = target_1_x,
+                target_1_y = target_1_y,
+                target_1_speed = target_1_speed,
+                target_1_resolution = target_1_resolution,
 
-                target_two_x = target_two_x,
-                target_two_y = target_two_y,
-                target_two_speed = target_two_speed,
-                target_two_resolution = target_two_resolution,
+                target_2_x = target_2_x,
+                target_2_y = target_2_y,
+                target_2_speed = target_2_speed,
+                target_2_resolution = target_2_resolution,
 
-                target_three_x = target_three_x,
-                target_three_y = target_three_y,
-                target_three_speed = target_three_speed,
-                target_three_resolution = target_three_resolution,
+                target_3_x = target_3_x,
+                target_3_y = target_3_y,
+                target_3_speed = target_3_speed,
+                target_3_resolution = target_3_resolution,
             )
             msg = None            
             self._fire_callbacks()
@@ -728,12 +728,9 @@ class LD2450BLE:
         await self._send_command(CMD_GET_MAC)
         await self._send_command(CMD_DISABLE_CONFIG)
 
-    async def _get_area(self) -> None:
-        """Execute command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_AREA)
-        await self._send_command(CMD_DISABLE_CONFIG)
+    async def _get_zone(self) -> None:
+        """Query zone config."""
+        await self._send_command(CMD_ZONE)
 
     async def _reboot(self) -> None:
         """Execute command."""
@@ -755,37 +752,37 @@ class LD2450BLE:
                 await self._send_command(CMD_ENABLE_MULTI_TARGET)
             await self._send_command(CMD_DISABLE_CONFIG)
 
-    async def _set_area(self, area_mode: int, 
-        area_one_first_vertex_x: int | 0, 
-        area_one_first_vertex_y: int | 0, 
-        area_one_second_vertex_x: int | 0, 
-        area_one_second_vertex_y: int | 0, 
-        area_two_first_vertex_x: int | 0, 
-        area_two_first_vertex_y: int | 0, 
-        area_two_second_vertex_x: int | 0, 
-        area_two_second_vertex_y: int | 0, 
-        area_three_first_vertex_x: int | 0, 
-        area_three_first_vertex_y: int | 0, 
-        area_three_second_vertex_x: int | 0, 
-        area_three_second_vertex_y: int | 0) -> None:
+    async def _set_zone(self, zone_type: int, 
+        zone_1_x1: int | 0, 
+        zone_1_y1: int | 0, 
+        zone_1_x2: int | 0, 
+        zone_1_y2: int | 0, 
+        zone_2_x1: int | 0, 
+        zone_2_y1: int | 0, 
+        zone_2_x2: int | 0, 
+        zone_2_y2: int | 0, 
+        zone_3_x1: int | 0, 
+        zone_3_y1: int | 0, 
+        zone_3_x2: int | 0, 
+        zone_3_y2: int | 0) -> None:
         """Execute command."""
         assert self._client is not None  # nosec
         await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_SET_AREA_PRE + 
-            area_mode.to_bytes(2,"little") + 
-            self._num2hex(area_one_first_vertex_x) + 
-            self._num2hex(area_one_first_vertex_y) + 
-            self._num2hex(area_one_second_vertex_x) + 
-            self._num2hex(area_one_second_vertex_y) +  
-            self._num2hex(area_two_first_vertex_x) + 
-            self._num2hex(area_two_first_vertex_y) + 
-            self._num2hex(area_two_second_vertex_x) +  
-            self._num2hex(area_two_second_vertex_y) + 
-            self._num2hex(area_three_first_vertex_x) + 
-            self._num2hex(area_three_first_vertex_y) + 
-            self._num2hex(area_three_second_vertex_x) + 
-            self._num2hex(area_three_second_vertex_y) +
-            CMD_SET_AREA_POST)
+        await self._send_command(CMD_SET_ZONE_PRE + 
+            zone_type.to_bytes(2,"little") + 
+            self._num2hex(zone_1_x1) + 
+            self._num2hex(zone_1_y1) + 
+            self._num2hex(zone_1_x2) + 
+            self._num2hex(zone_1_y2) +  
+            self._num2hex(zone_2_x1) + 
+            self._num2hex(zone_2_y1) + 
+            self._num2hex(zone_2_x2) +  
+            self._num2hex(zone_2_y2) + 
+            self._num2hex(zone_3_x1) + 
+            self._num2hex(zone_3_y1) + 
+            self._num2hex(zone_3_x2) + 
+            self._num2hex(zone_3_y2) +
+            CMD_SET_ZONE_POST)
         await self._send_command(CMD_DISABLE_CONFIG)
             
     def _num2hex(self, num: int) -> bytes:

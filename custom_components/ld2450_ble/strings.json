@@ -21,40 +21,40 @@
   },
   "entity": {
     "sensor": {
-      "target_one_x": {
+      "target_1_x": {
         "name": "Target One X"
       },
-      "target_one_y": {
+      "target_1_y": {
         "name": "Target One Y"
       },
-      "target_one_speed": {
+      "target_1_speed": {
         "name": "Target One Speed"
       },
-      "target_one_resolution": {
+      "target_1_resolution": {
         "name": "Target One Resolution"
       },
-      "target_two_x": {
+      "target_2_x": {
         "name": "Target Two X"
       },
-      "target_two_y": {
+      "target_2_y": {
         "name": "Target Two Y"
       },
-      "target_two_speed": {
+      "target_2_speed": {
         "name": "Target Two Speed"
       },
-      "target_two_resolution": {
+      "target_2_resolution": {
         "name": "Target Two Resolution"
       },
-      "target_three_x": {
+      "target_3_x": {
         "name": "Target Three X"
       },
-      "target_three_y": {
+      "target_3_y": {
         "name": "Target Three Y"
       },
-      "target_three_speed": {
+      "target_3_speed": {
         "name": "Target Three Speed"
       },
-      "target_three_resolution": {
+      "target_3_resolution": {
         "name": "Target Three Resolution"
       }
     }

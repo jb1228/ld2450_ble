@@ -48,7 +48,7 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
         super().__init__(coordinator)
         self._coordinator = coordinator
         self._device = device
-        self._attr_unique_id = f"{device.name}_area_mode"
+        self._attr_unique_id = f"{device.name}_zone_type"
         self._attr_device_info = DeviceInfo(
             name=name,
             connections={(dr.CONNECTION_BLUETOOTH, device.address)},
@@ -56,14 +56,14 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
             model="LD2450",
             sw_version=getattr(self._device, "fw_ver"),
         )
-        self._attr_options = ["Disable", "Monitor Area", "Ignore Area"]
+        self._attr_options = ["Disable", "Monitor Zone", "Ignore Zone"]
         self._attr_current_option = "Disable"
         self._attr_native_value = 0
 
     @property
     def translation_key(self):
         """Return translation_key."""
-        return "area_mode"
+        return "zone_type"
         
     @property
     def unique_id(self):
@@ -78,15 +78,15 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        match getattr(self._device, "area_mode"):
+        match getattr(self._device, "zone_type"):
             case 0:
                 self._attr_current_option = "Disable"
             case 1:
-                self._attr_current_option = "Monitor Area"
+                self._attr_current_option = "Monitor Zone"
             case 2:
-                self._attr_current_option = "Ignore Area"
+                self._attr_current_option = "Ignore Zone"
             case _:
-                _LOGGER.error("Unknown area mode: %s", getattr(self._device, "area_mode"))
+                _LOGGER.error("Unknown zone type: %s", getattr(self._device, "zone_type"))
 
         self.async_write_ha_state()
 
@@ -98,46 +98,46 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
     async def async_select_option(self, option: str) -> None:
         match option:
             case "Disable":
-                await self._device._set_area(0, 
-                    getattr(self._device, "area_one_first_vertex_x"), 
-                    getattr(self._device, "area_one_first_vertex_y"), 
-                    getattr(self._device, "area_one_second_vertex_x"), 
-                    getattr(self._device, "area_one_second_vertex_y"), 
-                    getattr(self._device, "area_two_first_vertex_x"), 
-                    getattr(self._device, "area_two_first_vertex_y"), 
-                    getattr(self._device, "area_two_second_vertex_x"), 
-                    getattr(self._device, "area_two_second_vertex_y"), 
-                    getattr(self._device, "area_three_first_vertex_x"), 
-                    getattr(self._device, "area_three_first_vertex_y"), 
-                    getattr(self._device, "area_three_second_vertex_x"), 
-                    getattr(self._device, "area_three_second_vertex_y"))
-            case "Monitor Area":
-                await self._device._set_area(1, 
-                    getattr(self._device, "area_one_first_vertex_x"), 
-                    getattr(self._device, "area_one_first_vertex_y"), 
-                    getattr(self._device, "area_one_second_vertex_x"), 
-                    getattr(self._device, "area_one_second_vertex_y"), 
-                    getattr(self._device, "area_two_first_vertex_x"), 
-                    getattr(self._device, "area_two_first_vertex_y"), 
-                    getattr(self._device, "area_two_second_vertex_x"), 
-                    getattr(self._device, "area_two_second_vertex_y"), 
-                    getattr(self._device, "area_three_first_vertex_x"), 
-                    getattr(self._device, "area_three_first_vertex_y"), 
-                    getattr(self._device, "area_three_second_vertex_x"), 
-                    getattr(self._device, "area_three_second_vertex_y"))
-            case "Ignore Area":
-                await self._device._set_area(2, 
-                    getattr(self._device, "area_one_first_vertex_x"), 
-                    getattr(self._device, "area_one_first_vertex_y"), 
-                    getattr(self._device, "area_one_second_vertex_x"), 
-                    getattr(self._device, "area_one_second_vertex_y"), 
-                    getattr(self._device, "area_two_first_vertex_x"), 
-                    getattr(self._device, "area_two_first_vertex_y"), 
-                    getattr(self._device, "area_two_second_vertex_x"), 
-                    getattr(self._device, "area_two_second_vertex_y"), 
-                    getattr(self._device, "area_three_first_vertex_x"), 
-                    getattr(self._device, "area_three_first_vertex_y"), 
-                    getattr(self._device, "area_three_second_vertex_x"), 
-                    getattr(self._device, "area_three_second_vertex_y"))
+                await self._device._set_zone(0, 
+                    getattr(self._device, "zone_1_first_vertex_x"), 
+                    getattr(self._device, "zone_1_first_vertex_y"), 
+                    getattr(self._device, "zone_1_second_vertex_x"), 
+                    getattr(self._device, "zone_1_second_vertex_y"), 
+                    getattr(self._device, "zone_2_first_vertex_x"), 
+                    getattr(self._device, "zone_2_first_vertex_y"), 
+                    getattr(self._device, "zone_2_second_vertex_x"), 
+                    getattr(self._device, "zone_2_second_vertex_y"), 
+                    getattr(self._device, "zone_3_first_vertex_x"), 
+                    getattr(self._device, "zone_3_first_vertex_y"), 
+                    getattr(self._device, "zone_3_second_vertex_x"), 
+                    getattr(self._device, "zone_3_second_vertex_y"))
+            case "Monitor Zone":
+                await self._device._set_zone(1, 
+                    getattr(self._device, "zone_1_first_vertex_x"), 
+                    getattr(self._device, "zone_1_first_vertex_y"), 
+                    getattr(self._device, "zone_1_second_vertex_x"), 
+                    getattr(self._device, "zone_1_second_vertex_y"), 
+                    getattr(self._device, "zone_2_first_vertex_x"), 
+                    getattr(self._device, "zone_2_first_vertex_y"), 
+                    getattr(self._device, "zone_2_second_vertex_x"), 
+                    getattr(self._device, "zone_2_second_vertex_y"), 
+                    getattr(self._device, "zone_3_first_vertex_x"), 
+                    getattr(self._device, "zone_3_first_vertex_y"), 
+                    getattr(self._device, "zone_3_second_vertex_x"), 
+                    getattr(self._device, "zone_3_second_vertex_y"))
+            case "Ignore Zone":
+                await self._device._set_zone(2, 
+                    getattr(self._device, "zone_1_first_vertex_x"), 
+                    getattr(self._device, "zone_1_first_vertex_y"), 
+                    getattr(self._device, "zone_1_second_vertex_x"), 
+                    getattr(self._device, "zone_1_second_vertex_y"), 
+                    getattr(self._device, "zone_2_first_vertex_x"), 
+                    getattr(self._device, "zone_2_first_vertex_y"), 
+                    getattr(self._device, "zone_2_second_vertex_x"), 
+                    getattr(self._device, "zone_2_second_vertex_y"), 
+                    getattr(self._device, "zone_3_first_vertex_x"), 
+                    getattr(self._device, "zone_3_first_vertex_y"), 
+                    getattr(self._device, "zone_3_second_vertex_x"), 
+                    getattr(self._device, "zone_3_second_vertex_y"))
             case _:
                 _LOGGER.error("Unknown option: %s", option)

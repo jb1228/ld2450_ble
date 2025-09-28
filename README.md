@@ -13,7 +13,7 @@ The sensor only outputs coordinates of up to three targets and their speed, but 
 
 ![image](https://github.com/MassiPi/ld2450_ble/assets/2384381/7c8f944a-35a3-4fd5-a7cb-4913463a8ff2)
 
-The LD2450 is also fully controllable over BLE, so i added switch (for multi-target mode), button (for reboot), select (for area mode) and number slider (for up to 3 areas configuration).
+The LD2450 is also fully controllable over BLE, so i added switch (for multi-target mode), button (for reboot), select (for zone mode) and number slider (for up to 3 zones configuration).
 
 ![image](https://github.com/MassiPi/ld2450_ble/assets/2384381/38e1a29c-66a0-4be3-83dd-ece0a1f10fc4)
 
