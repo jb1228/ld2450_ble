@@ -21,82 +21,82 @@
   },
   "entity": {
     "sensor": {
-      "target_one_x": {
-        "name": "Target One X"
+      "target_1_x": {
+        "name": "Target 1 X"
       },
-      "target_one_y": {
-        "name": "Target One Y"
+      "target_1_y": {
+        "name": "Target 1 Y"
       },
-      "target_one_speed": {
-        "name": "Target One Speed"
+      "target_1_speed": {
+        "name": "Target 1 Speed"
       },
-      "target_one_resolution": {
-        "name": "Target One Resolution"
+      "target_1_resolution": {
+        "name": "Target 1 Resolution"
       },
-      "target_two_x": {
-        "name": "Target Two X"
+      "target_2_x": {
+        "name": "Target 2 X"
       },
-      "target_two_y": {
-        "name": "Target Two Y"
+      "target_2_y": {
+        "name": "Target 2 Y"
       },
-      "target_two_speed": {
-        "name": "Target Two Speed"
+      "target_2_speed": {
+        "name": "Target 2 Speed"
       },
-      "target_two_resolution": {
-        "name": "Target Two Resolution"
+      "target_2_resolution": {
+        "name": "Target 2 Resolution"
       },
-      "target_three_x": {
-        "name": "Target Three X"
+      "target_3_x": {
+        "name": "Target 3 X"
       },
-      "target_three_y": {
-        "name": "Target Three Y"
+      "target_3_y": {
+        "name": "Target 3 Y"
       },
-      "target_three_speed": {
-        "name": "Target Three Speed"
+      "target_3_speed": {
+        "name": "Target 3 Speed"
       },
-      "target_three_resolution": {
-        "name": "Target Three Resolution"
+      "target_3_resolution": {
+        "name": "Target 3 Resolution"
       },
-      "target_one_distance": {
-        "name": "Target One Distance"
+      "target_1_distance": {
+        "name": "Target 1 Distance"
       },
-      "target_two_distance": {
-        "name": "Target Two Distance"
+      "target_2_distance": {
+        "name": "Target 2 Distance"
       },
-      "target_three_distance": {
-        "name": "Target Three Distance"
+      "target_3_distance": {
+        "name": "Target 3 Distance"
       },
-      "target_one_angle": {
-        "name": "Target One Angle"
+      "target_1_angle": {
+        "name": "Target 1 Angle"
       },
-      "target_two_angle": {
-        "name": "Target Two Angle"
+      "target_2_angle": {
+        "name": "Target 2 Angle"
       },
-      "target_three_angle": {
-        "name": "Target Three Angle"
+      "target_3_angle": {
+        "name": "Target 3 Angle"
       }
     },
     "binary_sensor": {
       "any_presence": {
         "name": "Presence"
       },
-      "one_target": {
-        "name": "One Target"
+      "target_1": {
+        "name": "Target 1"
       },
-      "two_target": {
-        "name": "Two Target"
+      "target_2": {
+        "name": "Target 2"
       },
-      "three_target": {
-        "name": "Three Target"
+      "target_3": {
+        "name": "Target 3"
       },
-      "one_moving": {
-        "name": "Target One Moving"
+      "target_1_moving": {
+        "name": "Target 1 Moving"
       },
-      "two_moving": {
-        "name": "Target Two Moving"
+      "target_2_moving": {
+        "name": "Target 2 Moving"
       },
-      "three_moving": {
-        "name": "Target Three Moving"
+      "target_3_moving": {
+        "name": "Target 3 Moving"
       }
     },
     "switch": {
@@ -105,51 +105,51 @@
       }
     },
     "select": {
-      "area_mode": {
-        "name": "Area Mode"
+      "zone_type": {
+        "name": "Zone Type"
       }
     },
     "button": {
-      "reboot": {
-        "name": "Reboot"
+      "restart": {
+        "name": "Restart"
       }
     },
     "number": {
-      "area_one_first_vertex_x": {
-        "name": "Area One First Vertex X"
+      "zone_1_x1": {
+        "name": "Zone 1 X1"
       },
-      "area_one_first_vertex_y": {
-        "name": "Area One First Vertex Y"
+      "zone_1_y1": {
+        "name": "Zone 1 Y1"
       },
-      "area_one_second_vertex_x": {
-        "name": "Area One Second Vertex X"
+      "zone_1_x2": {
+        "name": "Zone 1 X2"
       },
-      "area_one_second_vertex_y": {
-        "name": "Area One Second Vertex Y"
+      "zone_1_y2": {
+        "name": "Zone 1 Y2"
       },
-      "area_two_first_vertex_x": {
-        "name": "Area Two First Vertex X"
+      "zone_2_x1": {
+        "name": "Zone 2 X1"
       },
-      "area_two_first_vertex_y": {
-        "name": "Area Two First Vertex Y"
+      "zone_2_y1": {
+        "name": "Zone 2 Y1"
       },
-      "area_two_second_vertex_x": {
-        "name": "Area Two Second Vertex X"
+      "zone_2_x2": {
+        "name": "Zone 2 X2"
       },
-      "area_two_second_vertex_y": {
-        "name": "Area Two Second Vertex Y"
+      "zone_2_y2": {
+        "name": "Zone 2 Y2"
       },
-      "area_three_first_vertex_x": {
-        "name": "Area Three First Vertex X"
+      "zone_3_x1": {
+        "name": "Zone 3 X1"
       },
-      "area_three_first_vertex_y": {
-        "name": "Area Three First Vertex Y"
+      "zone_3_y1": {
+        "name": "Zone 3 Y1"
       },
-      "area_three_second_vertex_x": {
-        "name": "Area Three Second Vertex X"
+      "zone_3_x2": {
+        "name": "Zone 3 X2"
       },
-      "area_three_second_vertex_y": {
-        "name": "Area Three Second Vertex Y"
+      "zone_3_y2": {
+        "name": "Zone 3 Y2"
       }
     }
   }

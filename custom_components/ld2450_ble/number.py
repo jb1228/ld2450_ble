@@ -21,9 +21,9 @@ from .models import LD2450BLEData
 
 _LOGGER = logging.getLogger(__name__)
 
-AREA_ONE_FIRST_VERTEX_X_DESCRIPTION = NumberEntityDescription(
-    key="area_one_first_vertex_x",
-    translation_key="area_one_first_vertex_x",
+ZONE_1_X1_DESCRIPTION = NumberEntityDescription(
+    key="zone_1_x1",
+    translation_key="zone_1_x1",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=-5000,
@@ -33,9 +33,9 @@ AREA_ONE_FIRST_VERTEX_X_DESCRIPTION = NumberEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
-AREA_ONE_FIRST_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
-    key="area_one_first_vertex_y",
-    translation_key="area_one_first_vertex_y",
+ZONE_1_Y1_DESCRIPTION = NumberEntityDescription(
+    key="zone_1_y1",
+    translation_key="zone_1_y1",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=0,
@@ -45,9 +45,9 @@ AREA_ONE_FIRST_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
-AREA_ONE_SECOND_VERTEX_X_DESCRIPTION = NumberEntityDescription(
-    key="area_one_second_vertex_x",
-    translation_key="area_one_second_vertex_x",
+ZONE_1_X2_DESCRIPTION = NumberEntityDescription(
+    key="zone_1_x2",
+    translation_key="zone_1_x2",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=-5000,
@@ -57,58 +57,9 @@ AREA_ONE_SECOND_VERTEX_X_DESCRIPTION = NumberEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
-AREA_ONE_SECOND_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
-    key="area_one_second_vertex_y",
-    translation_key="area_one_second_vertex_y",
-    device_class=NumberDeviceClass.DISTANCE,
-    mode="slider",
-    native_min_value=0,
-    native_max_value=7300,
-    native_step=100,
-    entity_registry_enabled_default=True,
-    entity_registry_visible_default=True,
-    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
-)
-
-AREA_TWO_FIRST_VERTEX_X_DESCRIPTION = NumberEntityDescription(
-    key="area_two_first_vertex_x",
-    translation_key="area_two_first_vertex_x",
-    device_class=NumberDeviceClass.DISTANCE,
-    mode="slider",
-    native_min_value=-5000,
-    native_max_value=5000,
-    native_step=100,
-    entity_registry_enabled_default=True,
-    entity_registry_visible_default=True,
-    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
-)
-AREA_TWO_FIRST_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
-    key="area_two_first_vertex_y",
-    translation_key="area_two_first_vertex_y",
-    device_class=NumberDeviceClass.DISTANCE,
-    mode="slider",
-    native_min_value=0,
-    native_max_value=7300,
-    native_step=100,
-    entity_registry_enabled_default=True,
-    entity_registry_visible_default=True,
-    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
-)
-AREA_TWO_SECOND_VERTEX_X_DESCRIPTION = NumberEntityDescription(
-    key="area_two_second_vertex_x",
-    translation_key="area_two_second_vertex_x",
-    device_class=NumberDeviceClass.DISTANCE,
-    mode="slider",
-    native_min_value=-5000,
-    native_max_value=5000,
-    native_step=100,
-    entity_registry_enabled_default=True,
-    entity_registry_visible_default=True,
-    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
-)
-AREA_TWO_SECOND_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
-    key="area_two_second_vertex_y",
-    translation_key="area_two_second_vertex_y",
+ZONE_1_Y2_DESCRIPTION = NumberEntityDescription(
+    key="zone_1_y2",
+    translation_key="zone_1_y2",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=0,
@@ -119,9 +70,9 @@ AREA_TWO_SECOND_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
 
-AREA_THREE_FIRST_VERTEX_X_DESCRIPTION = NumberEntityDescription(
-    key="area_three_first_vertex_x",
-    translation_key="area_three_first_vertex_x",
+ZONE_2_X1_DESCRIPTION = NumberEntityDescription(
+    key="zone_2_x1",
+    translation_key="zone_2_x1",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=-5000,
@@ -131,9 +82,9 @@ AREA_THREE_FIRST_VERTEX_X_DESCRIPTION = NumberEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
-AREA_THREE_FIRST_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
-    key="area_three_first_vertex_y",
-    translation_key="area_three_first_vertex_y",
+ZONE_2_Y1_DESCRIPTION = NumberEntityDescription(
+    key="zone_2_y1",
+    translation_key="zone_2_y1",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=0,
@@ -143,9 +94,9 @@ AREA_THREE_FIRST_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
-AREA_THREE_SECOND_VERTEX_X_DESCRIPTION = NumberEntityDescription(
-    key="area_three_second_vertex_x",
-    translation_key="area_three_second_vertex_x",
+ZONE_2_X2_DESCRIPTION = NumberEntityDescription(
+    key="zone_2_x2",
+    translation_key="zone_2_x2",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=-5000,
@@ -155,9 +106,58 @@ AREA_THREE_SECOND_VERTEX_X_DESCRIPTION = NumberEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
 )
-AREA_THREE_SECOND_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
-    key="area_three_second_vertex_y",
-    translation_key="area_three_second_vertex_y",
+ZONE_2_Y2_DESCRIPTION = NumberEntityDescription(
+    key="zone_2_y2",
+    translation_key="zone_2_y2",
+    device_class=NumberDeviceClass.DISTANCE,
+    mode="slider",
+    native_min_value=0,
+    native_max_value=7300,
+    native_step=100,
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+)
+
+ZONE_3_X1_DESCRIPTION = NumberEntityDescription(
+    key="zone_3_x1",
+    translation_key="zone_3_x1",
+    device_class=NumberDeviceClass.DISTANCE,
+    mode="slider",
+    native_min_value=-5000,
+    native_max_value=5000,
+    native_step=100,
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+)
+ZONE_3_Y1_DESCRIPTION = NumberEntityDescription(
+    key="zone_3_y1",
+    translation_key="zone_3_y1",
+    device_class=NumberDeviceClass.DISTANCE,
+    mode="slider",
+    native_min_value=0,
+    native_max_value=7300,
+    native_step=100,
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+)
+ZONE_3_X2_DESCRIPTION = NumberEntityDescription(
+    key="zone_3_x2",
+    translation_key="zone_3_x2",
+    device_class=NumberDeviceClass.DISTANCE,
+    mode="slider",
+    native_min_value=-5000,
+    native_max_value=5000,
+    native_step=100,
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+)
+ZONE_3_Y2_DESCRIPTION = NumberEntityDescription(
+    key="zone_3_y2",
+    translation_key="zone_3_y2",
     device_class=NumberDeviceClass.DISTANCE,
     mode="slider",
     native_min_value=0,
@@ -170,20 +170,20 @@ AREA_THREE_SECOND_VERTEX_Y_DESCRIPTION = NumberEntityDescription(
 
 SENSOR_DESCRIPTIONS = (
     [
-        AREA_ONE_FIRST_VERTEX_X_DESCRIPTION,
-        AREA_ONE_FIRST_VERTEX_Y_DESCRIPTION,
-        AREA_ONE_SECOND_VERTEX_X_DESCRIPTION,
-        AREA_ONE_SECOND_VERTEX_Y_DESCRIPTION,
+        ZONE_1_X1_DESCRIPTION,
+        ZONE_1_Y1_DESCRIPTION,
+        ZONE_1_X2_DESCRIPTION,
+        ZONE_1_Y2_DESCRIPTION,
         
-        AREA_TWO_FIRST_VERTEX_X_DESCRIPTION,
-        AREA_TWO_FIRST_VERTEX_Y_DESCRIPTION,
-        AREA_TWO_SECOND_VERTEX_X_DESCRIPTION,
-        AREA_TWO_SECOND_VERTEX_Y_DESCRIPTION,
+        ZONE_2_X1_DESCRIPTION,
+        ZONE_2_Y1_DESCRIPTION,
+        ZONE_2_X2_DESCRIPTION,
+        ZONE_2_Y2_DESCRIPTION,
         
-        AREA_THREE_FIRST_VERTEX_X_DESCRIPTION,
-        AREA_THREE_FIRST_VERTEX_Y_DESCRIPTION,
-        AREA_THREE_SECOND_VERTEX_X_DESCRIPTION,
-        AREA_THREE_SECOND_VERTEX_Y_DESCRIPTION,
+        ZONE_3_X1_DESCRIPTION,
+        ZONE_3_Y1_DESCRIPTION,
+        ZONE_3_X2_DESCRIPTION,
+        ZONE_3_Y2_DESCRIPTION,
     ]
 )
 
@@ -257,17 +257,17 @@ class LD2450BLENumber(CoordinatorEntity[LD2450BLECoordinator], NumberEntity):
 
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
-        await self._device._set_area(
-            getattr(self._device, "area_mode"), 
-            int(value) if self._key == "area_one_first_vertex_x" else getattr(self._device, "area_one_first_vertex_x"), 
-            int(value) if self._key == "area_one_first_vertex_y" else getattr(self._device, "area_one_first_vertex_y"), 
-            int(value) if self._key == "area_one_second_vertex_x" else getattr(self._device, "area_one_second_vertex_x"), 
-            int(value) if self._key == "area_one_second_vertex_y" else getattr(self._device, "area_one_second_vertex_y"), 
-            int(value) if self._key == "area_two_first_vertex_x" else getattr(self._device, "area_two_first_vertex_x"), 
-            int(value) if self._key == "area_two_first_vertex_y" else getattr(self._device, "area_two_first_vertex_y"), 
-            int(value) if self._key == "area_two_second_vertex_x" else getattr(self._device, "area_two_second_vertex_x"), 
-            int(value) if self._key == "area_two_second_vertex_y" else getattr(self._device, "area_two_second_vertex_y"), 
-            int(value) if self._key == "area_three_first_vertex_x" else getattr(self._device, "area_three_first_vertex_x"), 
-            int(value) if self._key == "area_three_first_vertex_y" else getattr(self._device, "area_three_first_vertex_y"), 
-            int(value) if self._key == "area_three_second_vertex_x" else getattr(self._device, "area_three_second_vertex_x"), 
-            int(value) if self._key == "area_three_second_vertex_y" else getattr(self._device, "area_three_second_vertex_y"))
+        await self._device._set_zone(
+            getattr(self._device, "zone_type"), 
+            int(value) if self._key == "zone_1_x1" else getattr(self._device, "zone_1_x1"), 
+            int(value) if self._key == "zone_1_y1" else getattr(self._device, "zone_1_y1"), 
+            int(value) if self._key == "zone_1_x2" else getattr(self._device, "zone_1_x2"), 
+            int(value) if self._key == "zone_1_y2" else getattr(self._device, "zone_1_y2"), 
+            int(value) if self._key == "zone_2_x1" else getattr(self._device, "zone_2_x1"), 
+            int(value) if self._key == "zone_2_y1" else getattr(self._device, "zone_2_y1"), 
+            int(value) if self._key == "zone_2_x2" else getattr(self._device, "zone_2_x2"), 
+            int(value) if self._key == "zone_2_y2" else getattr(self._device, "zone_2_y2"), 
+            int(value) if self._key == "zone_3_x1" else getattr(self._device, "zone_3_x1"), 
+            int(value) if self._key == "zone_3_y1" else getattr(self._device, "zone_3_y1"), 
+            int(value) if self._key == "zone_3_x2" else getattr(self._device, "zone_3_x2"), 
+            int(value) if self._key == "zone_3_y2" else getattr(self._device, "zone_3_y2"))

@@ -30,45 +30,45 @@ ANY_PRESENCE = BinarySensorEntityDescription(
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
 )
-ONE_TARGET = BinarySensorEntityDescription(
-    key="one_target",
-    translation_key="one_target",
+TARGET_1 = BinarySensorEntityDescription(
+    key="target_1",
+    translation_key="target_1",
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
 )
-TWO_TARGET = BinarySensorEntityDescription(
-    key="two_target",
-    translation_key="two_target",
+TARGET_2 = BinarySensorEntityDescription(
+    key="target_2",
+    translation_key="target_2",
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
 )
-THREE_TARGET = BinarySensorEntityDescription(
-    key="three_target",
-    translation_key="three_target",
+TARGET_3 = BinarySensorEntityDescription(
+    key="target_3",
+    translation_key="target_3",
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
 )
 
-ONE_MOVING = BinarySensorEntityDescription(
-    key="one_moving",
-    translation_key="one_moving",
+TARGET_1_MOVING = BinarySensorEntityDescription(
+    key="target_1_moving",
+    translation_key="target_1_moving",
     device_class=BinarySensorDeviceClass.MOVING,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
 )
-TWO_MOVING = BinarySensorEntityDescription(
-    key="two_moving",
-    translation_key="two_moving",
+TARGET_2_MOVING = BinarySensorEntityDescription(
+    key="target_2_moving",
+    translation_key="target_2_moving",
     device_class=BinarySensorDeviceClass.MOVING,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
 )
-THREE_MOVING = BinarySensorEntityDescription(
-    key="three_moving",
-    translation_key="three_moving",
+TARGET_3_MOVING = BinarySensorEntityDescription(
+    key="target_3_moving",
+    translation_key="target_3_moving",
     device_class=BinarySensorDeviceClass.MOVING,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
@@ -77,13 +77,13 @@ THREE_MOVING = BinarySensorEntityDescription(
 SENSOR_DESCRIPTIONS = (
     [
         ANY_PRESENCE,
-        ONE_TARGET,
-        TWO_TARGET,
-        THREE_TARGET,
+        TARGET_1,
+        TARGET_2,
+        TARGET_3,
         
-        ONE_MOVING,
-        TWO_MOVING,
-        THREE_MOVING,
+        TARGET_1_MOVING,
+        TARGET_2_MOVING,
+        TARGET_3_MOVING,
     ]
 )
 async def async_setup_entry(
@@ -152,37 +152,37 @@ class LD2450BLEBinary(CoordinatorEntity[LD2450BLECoordinator], BinarySensorEntit
         """Handle updated data from the coordinator."""
         match self._key:
             case "any_presence":
-                if ( getattr(self._device, "target_one_y") > 0 ):
+                if ( getattr(self._device, "target_1_y") > 0 ):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
-            case "one_target":
-                if ( getattr(self._device, "target_one_y") > 0 and getattr(self._device, "target_two_y") == 0):
+            case "target_1":
+                if ( getattr(self._device, "target_1_y") > 0 and getattr(self._device, "target_2_y") == 0):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
-            case "two_target":
-                if ( getattr(self._device, "target_two_y") > 0 and getattr(self._device, "target_three_y") == 0):
+            case "target_2":
+                if ( getattr(self._device, "target_2_y") > 0 and getattr(self._device, "target_3_y") == 0):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
-            case "three_target":
-                if ( getattr(self._device, "target_three_y") > 0 ):
+            case "target_3":
+                if ( getattr(self._device, "target_3_y") > 0 ):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
-            case "one_moving":
-                if ( getattr(self._device, "target_one_speed") > 0 ):
+            case "target_1_moving":
+                if ( getattr(self._device, "target_1_speed") > 0 ):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
-            case "two_moving":
-                if ( getattr(self._device, "target_two_speed") > 0 ):
+            case "target_2_moving":
+                if ( getattr(self._device, "target_2_speed") > 0 ):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
-            case "three_moving":
-                if ( getattr(self._device, "target_three_speed") > 0 ):
+            case "target_3_moving":
+                if ( getattr(self._device, "target_3_speed") > 0 ):
                     self._attr_native_value = True
                 else:
                     self._attr_native_value = False
