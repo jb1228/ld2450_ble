@@ -1,3 +1,14 @@
+# ⚠️ Development Fork - Not for General Use
+
+This is a development fork used for testing and experimentation. 
+
+**For the official LD2450 BLE integration, please visit: https://github.com/MassiPi/ld2450_ble**
+
+---
+
+<details>
+<summary>📋 Development Documentation (Click to expand)</summary>
+
 # LD2450 BLE Integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
@@ -53,7 +64,7 @@ The integration supports automatic discovery of LD2450 devices:
 
 ### Configuration Entities
 - Multi-target mode switch
-- Zone mode selector (Off, AND, OR)
+- Zone type selector (Disabled, Detection, Filter)
 - Zone coordinate configuration (up to 3 zones)
 - Reboot button
 
@@ -67,7 +78,11 @@ This integration is based on:
 - Home Assistant's official [LD2410 BLE integration](https://www.home-assistant.io/integrations/ld2410_ble/)
 - Original Bluetooth protocol implementation from [930913/ld2410-ble](https://github.com/930913/ld2410-ble)
 - Modified and extended for LD2450 support by [MassiPI](https://github.com/MassiPI)
+- Plotly Graph card config derived from: https://community.home-assistant.io/t/screek-human-sensor-2a-ld2450-24ghz-mmwave-human-tracker-sensor/603070/41
+
 
 As a bonus, there is the 3d model for a sensor case (just print it..) (5 parts: sensor box (with text), back plate, 3-pieces-support to allow solid positioning of the sensor)
 
 ![image](https://github.com/user-attachments/assets/d84e66ad-e7e6-463b-be1d-7ceca93e85db)
+
+</details>

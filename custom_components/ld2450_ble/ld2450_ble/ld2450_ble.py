@@ -464,7 +464,7 @@ class LD2450BLE:
                 _LOGGER.error("Zone query failed")
             else:
                 _LOGGER.debug("Zone query success")
-                zone_type = int.from_bytes(msg.group("ACK_ZONE_MODE"),"little")
+                zone_type = int.from_bytes(msg.group("ACK_ZONE_TYPE"),"little")
 
                 #first zone
                 zone_1_x1 = int.from_bytes(msg.group("ACK_ZONE_ONE")[0:2],"little",signed=True)
@@ -486,7 +486,7 @@ class LD2450BLE:
 
                 self._config = LD2450BLEConfig(
                     target_mode = self._config.target_mode,
-                    fw_ver = fw_ver,
+                    fw_ver = self._config.fw_ver,
                     mac_addr = self._config.mac_addr,
                     zone_type = zone_type,
                     zone_1_x1 = zone_1_x1,
@@ -502,6 +502,7 @@ class LD2450BLE:
                     zone_3_x2 = zone_3_x2,
                     zone_3_y2 = zone_3_y2,
                 )
+                self._fire_callbacks()
             msg = None            
 
         msg = re.search(frame_regex, self._buf)
@@ -730,7 +731,10 @@ class LD2450BLE:
 
     async def _get_zone(self) -> None:
         """Query zone config."""
+        assert self._client is not None  # nosec
+        await self._send_command(CMD_ENABLE_CONFIG)
         await self._send_command(CMD_ZONE)
+        await self._send_command(CMD_DISABLE_CONFIG)
 
     async def _reboot(self) -> None:
         """Execute command."""

@@ -22,40 +22,40 @@
   "entity": {
     "sensor": {
       "target_1_x": {
-        "name": "Target One X"
+        "name": "Target 1 X"
       },
       "target_1_y": {
-        "name": "Target One Y"
+        "name": "Target 1 Y"
       },
       "target_1_speed": {
-        "name": "Target One Speed"
+        "name": "Target 1 Speed"
       },
       "target_1_resolution": {
-        "name": "Target One Resolution"
+        "name": "Target 1 Resolution"
       },
       "target_2_x": {
-        "name": "Target Two X"
+        "name": "Target 2 X"
       },
       "target_2_y": {
-        "name": "Target Two Y"
+        "name": "Target 2 Y"
       },
       "target_2_speed": {
-        "name": "Target Two Speed"
+        "name": "Target 2 Speed"
       },
       "target_2_resolution": {
-        "name": "Target Two Resolution"
+        "name": "Target 2 Resolution"
       },
       "target_3_x": {
-        "name": "Target Three X"
+        "name": "Target 3 X"
       },
       "target_3_y": {
-        "name": "Target Three Y"
+        "name": "Target 3 Y"
       },
       "target_3_speed": {
-        "name": "Target Three Speed"
+        "name": "Target 3 Speed"
       },
       "target_3_resolution": {
-        "name": "Target Three Resolution"
+        "name": "Target 3 Resolution"
       }
     }
   }

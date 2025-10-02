@@ -30,6 +30,7 @@ TARGET_1_X_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:arrow-left-right",
 )
 TARGET_1_Y_DESCRIPTION = SensorEntityDescription(
     key="target_1_y",
@@ -39,6 +40,7 @@ TARGET_1_Y_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:arrow-up-down",
 )
 TARGET_1_SPEED_DESCRIPTION = SensorEntityDescription(
     key="target_1_speed",
@@ -48,6 +50,7 @@ TARGET_1_SPEED_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement="cm/s",
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:speedometer-slow",
 )
 TARGET_1_RESOLUTION_DESCRIPTION = SensorEntityDescription(
     key="target_1_resolution",
@@ -56,6 +59,7 @@ TARGET_1_RESOLUTION_DESCRIPTION = SensorEntityDescription(
     entity_registry_enabled_default=False,
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+    icon="mdi:map-marker-radius-outline",
 )
 
 TARGET_2_X_DESCRIPTION = SensorEntityDescription(
@@ -66,6 +70,7 @@ TARGET_2_X_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:arrow-left-right",
 )
 TARGET_2_Y_DESCRIPTION = SensorEntityDescription(
     key="target_2_y",
@@ -75,6 +80,7 @@ TARGET_2_Y_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:arrow-up-down",
 )
 TARGET_2_SPEED_DESCRIPTION = SensorEntityDescription(
     key="target_2_speed",
@@ -84,6 +90,7 @@ TARGET_2_SPEED_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement="cm/s",
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:speedometer-slow",
 )
 TARGET_2_RESOLUTION_DESCRIPTION = SensorEntityDescription(
     key="target_2_resolution",
@@ -92,6 +99,7 @@ TARGET_2_RESOLUTION_DESCRIPTION = SensorEntityDescription(
     entity_registry_enabled_default=False,
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+    icon="mdi:map-marker-radius-outline",
 )
 
 TARGET_3_X_DESCRIPTION = SensorEntityDescription(
@@ -102,6 +110,7 @@ TARGET_3_X_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:arrow-left-right",
 )
 TARGET_3_Y_DESCRIPTION = SensorEntityDescription(
     key="target_3_y",
@@ -111,6 +120,7 @@ TARGET_3_Y_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:arrow-up-down",
 )
 TARGET_3_SPEED_DESCRIPTION = SensorEntityDescription(
     key="target_3_speed",
@@ -120,6 +130,7 @@ TARGET_3_SPEED_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=False,
     native_unit_of_measurement="cm/s",
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:speedometer-slow",
 )
 TARGET_3_RESOLUTION_DESCRIPTION = SensorEntityDescription(
     key="target_3_resolution",
@@ -128,6 +139,7 @@ TARGET_3_RESOLUTION_DESCRIPTION = SensorEntityDescription(
     entity_registry_enabled_default=False,
     entity_registry_visible_default=False,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
+    icon="mdi:map-marker-radius-outline",
 )
 
 #calculated
@@ -139,6 +151,7 @@ TARGET_1_DISTANCE_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:map-marker-distance",
 )
 TARGET_2_DISTANCE_DESCRIPTION = SensorEntityDescription(
     key="target_2_distance",
@@ -148,6 +161,7 @@ TARGET_2_DISTANCE_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:map-marker-distance",
 )
 TARGET_3_DISTANCE_DESCRIPTION = SensorEntityDescription(
     key="target_3_distance",
@@ -157,6 +171,7 @@ TARGET_3_DISTANCE_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement=UnitOfLength.MILLIMETERS,
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:map-marker-distance",
 )
 TARGET_1_ANGLE_DESCRIPTION = SensorEntityDescription(
     key="target_1_angle",
@@ -165,6 +180,7 @@ TARGET_1_ANGLE_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement="°",
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:angle-acute",
 )
 TARGET_2_ANGLE_DESCRIPTION = SensorEntityDescription(
     key="target_2_angle",
@@ -173,6 +189,7 @@ TARGET_2_ANGLE_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement="°",
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:angle-acute",
 )
 TARGET_3_ANGLE_DESCRIPTION = SensorEntityDescription(
     key="target_3_angle",
@@ -181,6 +198,7 @@ TARGET_3_ANGLE_DESCRIPTION = SensorEntityDescription(
     entity_registry_visible_default=True,
     native_unit_of_measurement="°",
     state_class=SensorStateClass.MEASUREMENT,
+    icon="mdi:angle-acute",
 )
 
 

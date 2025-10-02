@@ -56,8 +56,8 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
             model="LD2450",
             sw_version=getattr(self._device, "fw_ver"),
         )
-        self._attr_options = ["Disable", "Monitor Zone", "Ignore Zone"]
-        self._attr_current_option = "Disable"
+        self._attr_options = ["Disabled", "Detection", "Filter"]
+        self._attr_current_option = "Disabled"
         self._attr_native_value = 0
 
     @property
@@ -80,11 +80,11 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
         """Handle updated data from the coordinator."""
         match getattr(self._device, "zone_type"):
             case 0:
-                self._attr_current_option = "Disable"
+                self._attr_current_option = "Disabled"
             case 1:
-                self._attr_current_option = "Monitor Zone"
+                self._attr_current_option = "Detection"
             case 2:
-                self._attr_current_option = "Ignore Zone"
+                self._attr_current_option = "Filter"
             case _:
                 _LOGGER.error("Unknown zone type: %s", getattr(self._device, "zone_type"))
 
@@ -97,47 +97,47 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         match option:
-            case "Disable":
+            case "Disabled":
                 await self._device._set_zone(0, 
-                    getattr(self._device, "zone_1_first_vertex_x"), 
-                    getattr(self._device, "zone_1_first_vertex_y"), 
-                    getattr(self._device, "zone_1_second_vertex_x"), 
-                    getattr(self._device, "zone_1_second_vertex_y"), 
-                    getattr(self._device, "zone_2_first_vertex_x"), 
-                    getattr(self._device, "zone_2_first_vertex_y"), 
-                    getattr(self._device, "zone_2_second_vertex_x"), 
-                    getattr(self._device, "zone_2_second_vertex_y"), 
-                    getattr(self._device, "zone_3_first_vertex_x"), 
-                    getattr(self._device, "zone_3_first_vertex_y"), 
-                    getattr(self._device, "zone_3_second_vertex_x"), 
-                    getattr(self._device, "zone_3_second_vertex_y"))
-            case "Monitor Zone":
+                    getattr(self._device, "zone_1_x1"), 
+                    getattr(self._device, "zone_1_y1"), 
+                    getattr(self._device, "zone_1_x2"), 
+                    getattr(self._device, "zone_1_y2"), 
+                    getattr(self._device, "zone_2_x1"), 
+                    getattr(self._device, "zone_2_y1"), 
+                    getattr(self._device, "zone_2_x2"), 
+                    getattr(self._device, "zone_2_y2"), 
+                    getattr(self._device, "zone_3_x1"), 
+                    getattr(self._device, "zone_3_y1"), 
+                    getattr(self._device, "zone_3_x2"), 
+                    getattr(self._device, "zone_3_y2"))
+            case "Detection":
                 await self._device._set_zone(1, 
-                    getattr(self._device, "zone_1_first_vertex_x"), 
-                    getattr(self._device, "zone_1_first_vertex_y"), 
-                    getattr(self._device, "zone_1_second_vertex_x"), 
-                    getattr(self._device, "zone_1_second_vertex_y"), 
-                    getattr(self._device, "zone_2_first_vertex_x"), 
-                    getattr(self._device, "zone_2_first_vertex_y"), 
-                    getattr(self._device, "zone_2_second_vertex_x"), 
-                    getattr(self._device, "zone_2_second_vertex_y"), 
-                    getattr(self._device, "zone_3_first_vertex_x"), 
-                    getattr(self._device, "zone_3_first_vertex_y"), 
-                    getattr(self._device, "zone_3_second_vertex_x"), 
-                    getattr(self._device, "zone_3_second_vertex_y"))
-            case "Ignore Zone":
+                    getattr(self._device, "zone_1_x1"), 
+                    getattr(self._device, "zone_1_y1"), 
+                    getattr(self._device, "zone_1_x2"), 
+                    getattr(self._device, "zone_1_y2"), 
+                    getattr(self._device, "zone_2_x1"), 
+                    getattr(self._device, "zone_2_y1"), 
+                    getattr(self._device, "zone_2_x2"), 
+                    getattr(self._device, "zone_2_y2"), 
+                    getattr(self._device, "zone_3_x1"), 
+                    getattr(self._device, "zone_3_y1"), 
+                    getattr(self._device, "zone_3_x2"), 
+                    getattr(self._device, "zone_3_y2"))
+            case "Filter":
                 await self._device._set_zone(2, 
-                    getattr(self._device, "zone_1_first_vertex_x"), 
-                    getattr(self._device, "zone_1_first_vertex_y"), 
-                    getattr(self._device, "zone_1_second_vertex_x"), 
-                    getattr(self._device, "zone_1_second_vertex_y"), 
-                    getattr(self._device, "zone_2_first_vertex_x"), 
-                    getattr(self._device, "zone_2_first_vertex_y"), 
-                    getattr(self._device, "zone_2_second_vertex_x"), 
-                    getattr(self._device, "zone_2_second_vertex_y"), 
-                    getattr(self._device, "zone_3_first_vertex_x"), 
-                    getattr(self._device, "zone_3_first_vertex_y"), 
-                    getattr(self._device, "zone_3_second_vertex_x"), 
-                    getattr(self._device, "zone_3_second_vertex_y"))
+                    getattr(self._device, "zone_1_x1"), 
+                    getattr(self._device, "zone_1_y1"), 
+                    getattr(self._device, "zone_1_x2"), 
+                    getattr(self._device, "zone_1_y2"), 
+                    getattr(self._device, "zone_2_x1"), 
+                    getattr(self._device, "zone_2_y1"), 
+                    getattr(self._device, "zone_2_x2"), 
+                    getattr(self._device, "zone_2_y2"), 
+                    getattr(self._device, "zone_3_x1"), 
+                    getattr(self._device, "zone_3_y1"), 
+                    getattr(self._device, "zone_3_x2"), 
+                    getattr(self._device, "zone_3_y2"))
             case _:
                 _LOGGER.error("Unknown option: %s", option)

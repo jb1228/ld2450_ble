@@ -1,3 +1,5 @@
 entity_comparison.jinja
 entity_comparison.txt
 update_via_ssh.sh
+.DS_Store
+ld2450_protocol_gs.txt
