@@ -29,6 +29,7 @@ ANY_PRESENCE = BinarySensorEntityDescription(
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
+    icon="mdi:target-account",
 )
 TARGET_1 = BinarySensorEntityDescription(
     key="target_1",
@@ -36,6 +37,7 @@ TARGET_1 = BinarySensorEntityDescription(
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
+    icon="mdi:target-account",
 )
 TARGET_2 = BinarySensorEntityDescription(
     key="target_2",
@@ -43,6 +45,7 @@ TARGET_2 = BinarySensorEntityDescription(
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
+    icon="mdi:target-account",
 )
 TARGET_3 = BinarySensorEntityDescription(
     key="target_3",
@@ -50,6 +53,7 @@ TARGET_3 = BinarySensorEntityDescription(
     device_class=BinarySensorDeviceClass.OCCUPANCY,
     entity_registry_enabled_default=True,
     entity_registry_visible_default=True,
+    icon="mdi:target-account",
 )
 
 TARGET_1_MOVING = BinarySensorEntityDescription(
@@ -74,9 +78,29 @@ TARGET_3_MOVING = BinarySensorEntityDescription(
     entity_registry_visible_default=True,
 )
 
+MOVING_TARGET = BinarySensorEntityDescription(
+    key="moving_target",
+    translation_key="moving_target",
+    device_class=BinarySensorDeviceClass.MOVING,
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    icon="mdi:run",
+)
+
+STILL_TARGET = BinarySensorEntityDescription(
+    key="still_target",
+    translation_key="still_target",
+    device_class=BinarySensorDeviceClass.OCCUPANCY,
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    icon="mdi:meditation",
+)
+
 SENSOR_DESCRIPTIONS = (
     [
         ANY_PRESENCE,
+        MOVING_TARGET,
+        STILL_TARGET,
         TARGET_1,
         TARGET_2,
         TARGET_3,
@@ -150,44 +174,45 @@ class LD2450BLEBinary(CoordinatorEntity[LD2450BLECoordinator], BinarySensorEntit
     @callback
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
+        # Helper functions to check target states
+        def has_target(target_num):
+            return getattr(self._device, f"target_{target_num}_y") > 0
+        
+        def is_moving(target_num):
+            return abs(getattr(self._device, f"target_{target_num}_speed")) > 0
+        
         match self._key:
+            case "moving_target":
+                # Any target is detected AND moving
+                moving = any(has_target(i) and is_moving(i) for i in [1, 2, 3])
+                self._attr_native_value = moving
+                
+            case "still_target":
+                # Any target is detected BUT not moving
+                still = any(has_target(i) and not is_moving(i) for i in [1, 2, 3])
+                self._attr_native_value = still
+                
             case "any_presence":
-                if ( getattr(self._device, "target_1_y") > 0 ):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                # Any target detected (moving OR still)
+                present = any(has_target(i) for i in [1, 2, 3])
+                self._attr_native_value = present
+                
             case "target_1":
-                if ( getattr(self._device, "target_1_y") > 0 and getattr(self._device, "target_2_y") == 0):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                self._attr_native_value = has_target(1)
             case "target_2":
-                if ( getattr(self._device, "target_2_y") > 0 and getattr(self._device, "target_3_y") == 0):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                self._attr_native_value = has_target(2)
             case "target_3":
-                if ( getattr(self._device, "target_3_y") > 0 ):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                self._attr_native_value = has_target(3)
+                
             case "target_1_moving":
-                if ( getattr(self._device, "target_1_speed") > 0 ):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                self._attr_native_value = has_target(1) and is_moving(1)
             case "target_2_moving":
-                if ( getattr(self._device, "target_2_speed") > 0 ):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                self._attr_native_value = has_target(2) and is_moving(2)
             case "target_3_moving":
-                if ( getattr(self._device, "target_3_speed") > 0 ):
-                    self._attr_native_value = True
-                else:
-                    self._attr_native_value = False
+                self._attr_native_value = has_target(3) and is_moving(3)
+                
             case _:
-                _LOGGER.error("Wronk KEY for binary sensor: %s", self._key)
+                _LOGGER.error("Wrong KEY for binary sensor: %s", self._key)
 
         self.async_write_ha_state()
 

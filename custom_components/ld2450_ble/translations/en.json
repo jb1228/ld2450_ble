@@ -74,11 +74,26 @@
       },
       "target_3_angle": {
         "name": "Target 3 Angle"
+      },
+      "target_1_direction": {
+        "name": "Target 1 Direction"
+      },
+      "target_2_direction": {
+        "name": "Target 2 Direction"
+      },
+      "target_3_direction": {
+        "name": "Target 3 Direction"
       }
     },
     "binary_sensor": {
       "any_presence": {
         "name": "Presence"
+      },
+      "moving_target": {
+        "name": "Moving Target"
+      },
+      "still_target": {
+        "name": "Still Target"
       },
       "target_1": {
         "name": "Target 1"
@@ -112,8 +127,12 @@
     "button": {
       "restart": {
         "name": "Restart"
+      },
+      "factory_reset": {
+        "name": "Factory Reset"
       }
     },
+
     "number": {
       "zone_1_x1": {
         "name": "Zone 1 X1"

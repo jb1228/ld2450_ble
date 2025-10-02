@@ -56,6 +56,52 @@
       },
       "target_3_resolution": {
         "name": "Target 3 Resolution"
+      },
+      "target_1_direction": {
+        "name": "Target 1 Direction"
+      },
+      "target_2_direction": {
+        "name": "Target 2 Direction"
+      },
+      "target_3_direction": {
+        "name": "Target 3 Direction"
+      }
+    },
+    "binary_sensor": {
+      "any_presence": {
+        "name": "Presence"
+      },
+      "moving_target": {
+        "name": "Moving Target"
+      },
+      "still_target": {
+        "name": "Still Target"
+      },
+      "target_1": {
+        "name": "Target 1"
+      },
+      "target_2": {
+        "name": "Target 2"
+      },
+      "target_3": {
+        "name": "Target 3"
+      },
+      "target_1_moving": {
+        "name": "Target 1 Moving"
+      },
+      "target_2_moving": {
+        "name": "Target 2 Moving"
+      },
+      "target_3_moving": {
+        "name": "Target 3 Moving"
+      }
+    },
+    "button": {
+      "restart": {
+        "name": "Restart"
+      },
+      "factory_reset": {
+        "name": "Factory Reset"
       }
     }
   }

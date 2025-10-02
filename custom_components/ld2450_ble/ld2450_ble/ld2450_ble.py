@@ -44,6 +44,8 @@ from .const import (
     ACK_SET_ZONE_REGEX,
     CMD_REBOOT,
     ACK_REBOOT_REGEX,
+    CMD_FACTORY_RESET,
+    ACK_FACTORY_RESET_REGEX,
     frame_regex
     )
 from .exceptions import CharacteristicMissingError
@@ -338,6 +340,15 @@ class LD2450BLE:
                 _LOGGER.error("Reboot failed")
             else:
                 _LOGGER.debug("Reboot success")
+            msg = None
+        
+        msg = re.search(ACK_FACTORY_RESET_REGEX, self._buf)
+        if msg:
+            #ACK to factory reset. Check if command is good
+            if ( int.from_bytes(msg.group("ACK_FACTORY_RESET_RESULT"),"little") > 0 ):
+                _LOGGER.error("Factory reset failed")
+            else:
+                _LOGGER.debug("Factory reset success")
             msg = None
         
         msg = re.search(ACK_TARGET_MODE_REGEX, self._buf)
@@ -737,11 +748,37 @@ class LD2450BLE:
         await self._send_command(CMD_DISABLE_CONFIG)
 
     async def _reboot(self) -> None:
-        """Execute command."""
+        """Execute reboot command."""
         assert self._client is not None  # nosec
         await self._send_command(CMD_ENABLE_CONFIG)
         await self._send_command(CMD_REBOOT)
         await self._send_command(CMD_DISABLE_CONFIG)
+        # Device will reboot and disconnect, schedule reconnection
+        await self._schedule_reconnect_after_reboot()
+
+    async def _factory_reset(self) -> None:
+        """Execute factory reset command."""
+        assert self._client is not None  # nosec
+        await self._send_command(CMD_ENABLE_CONFIG)
+        await self._send_command(CMD_FACTORY_RESET)
+        await self._send_command(CMD_DISABLE_CONFIG)
+        # Device will factory reset and reboot, schedule reconnection
+        await self._schedule_reconnect_after_reboot()
+
+    async def _schedule_reconnect_after_reboot(self) -> None:
+        """Schedule reconnection after device reboot with appropriate delay."""
+        
+        async def delayed_reconnect():
+            # Wait for device to complete reboot (typically 3-5 seconds)
+            await asyncio.sleep(5)
+            # Reset expected disconnect flag to allow reconnection
+            self._expected_disconnect = False
+            # Attempt reconnection
+            _LOGGER.debug("Initiating reconnection after reboot")
+            await self._reconnect()
+        
+        # Start the delayed reconnection task
+        asyncio.create_task(delayed_reconnect())
 
     async def _set_target_mode(self, mode: int) -> None:
         """Execute command."""

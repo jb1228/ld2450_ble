@@ -200,6 +200,27 @@ TARGET_3_ANGLE_DESCRIPTION = SensorEntityDescription(
     state_class=SensorStateClass.MEASUREMENT,
     icon="mdi:angle-acute",
 )
+TARGET_1_DIRECTION_DESCRIPTION = SensorEntityDescription(
+    key="target_1_direction",
+    translation_key="target_1_direction",
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    icon="mdi:sign-direction",
+)
+TARGET_2_DIRECTION_DESCRIPTION = SensorEntityDescription(
+    key="target_2_direction",
+    translation_key="target_2_direction",
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    icon="mdi:sign-direction",
+)
+TARGET_3_DIRECTION_DESCRIPTION = SensorEntityDescription(
+    key="target_3_direction",
+    translation_key="target_3_direction",
+    entity_registry_enabled_default=True,
+    entity_registry_visible_default=True,
+    icon="mdi:sign-direction",
+)
 
 
 SENSOR_DESCRIPTIONS = (
@@ -225,7 +246,11 @@ SENSOR_DESCRIPTIONS = (
 
         TARGET_1_ANGLE_DESCRIPTION,
         TARGET_2_ANGLE_DESCRIPTION,
-        TARGET_3_ANGLE_DESCRIPTION        
+        TARGET_3_ANGLE_DESCRIPTION,
+
+        TARGET_1_DIRECTION_DESCRIPTION,
+        TARGET_2_DIRECTION_DESCRIPTION,
+        TARGET_3_DIRECTION_DESCRIPTION        
     ]
 )
 
@@ -292,6 +317,12 @@ class LD2450BLESensor(CoordinatorEntity[LD2450BLECoordinator], SensorEntity):
                 self._attr_native_value = int(math.degrees(math.atan2(getattr(self._device, "target_2_x"), getattr(self._device, "target_2_y"))))
             case "target_3_angle":
                 self._attr_native_value = int(math.degrees(math.atan2(getattr(self._device, "target_3_x"), getattr(self._device, "target_3_y"))))
+            case "target_1_direction":
+                self._attr_native_value = self._get_direction(1)
+            case "target_2_direction":
+                self._attr_native_value = self._get_direction(2)
+            case "target_3_direction":
+                self._attr_native_value = self._get_direction(3)
             case _:
                 #if not in calculated sensors, just get the value from sensor's state
                 self._attr_native_value = getattr(self._device, self._key)
@@ -301,3 +332,25 @@ class LD2450BLESensor(CoordinatorEntity[LD2450BLECoordinator], SensorEntity):
     def available(self) -> bool:
         """Unavailable if coordinator isn't connected."""
         return self._coordinator.connected and super().available
+
+    def _get_direction(self, target_num: int) -> str:
+        """Calculate direction based on target speed and position."""
+        # Get speed, x and y coordinates for the target
+        speed = getattr(self._device, f"target_{target_num}_speed", 0)
+        x_pos = getattr(self._device, f"target_{target_num}_x", 0)
+        y_pos = getattr(self._device, f"target_{target_num}_y", 0)
+        
+        # If both x and y are 0, target is not detected
+        if x_pos == 0 and y_pos == 0:
+            return "NA"
+        
+        # Determine direction based on speed
+        # Speed is in cm/s, positive values mean moving away, negative approaching
+        if abs(speed) <= 1:  # Consider speeds <= 1 cm/s as stationary
+            return "Stationary"
+        elif speed > 1:
+            return "Moving away"
+        elif speed < -1:
+            return "Approaching"
+        else:
+            return "NA"
