@@ -6,8 +6,8 @@ This is a development fork used for testing and experimentation.
 
 ---
 
-<!-- <details>
-<summary>📋 Development Documentation (Click to expand)</summary> -->
+<details>
+<summary>📋 Development Documentation (Click to expand)</summary>
 
 # LD2450 BLE Integration for Home Assistant
 
@@ -114,4 +114,4 @@ As a bonus, there is the 3d model for a sensor case (just print it..) (5 parts: 
 
 ![image](https://github.com/user-attachments/assets/d84e66ad-e7e6-463b-be1d-7ceca93e85db)
 
-<!-- </details> -->
+</details>
