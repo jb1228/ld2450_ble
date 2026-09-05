@@ -48,7 +48,7 @@ class LD2450BLESelect(CoordinatorEntity[LD2450BLECoordinator], SelectEntity):
         super().__init__(coordinator)
         self._coordinator = coordinator
         self._device = device
-        self._attr_unique_id = f"{device.name}_zone_type"
+        self._attr_unique_id = f"{device.address}_zone_type"
         self._attr_device_info = DeviceInfo(
             name=name,
             connections={(dr.CONNECTION_BLUETOOTH, device.address)},

@@ -146,7 +146,7 @@ class LD2450BLEBinary(CoordinatorEntity[LD2450BLECoordinator], BinarySensorEntit
         self._device = device
         self._key = description.key
         self.entity_description = description
-        self._attr_unique_id = f"{device.name}_{self._key}"
+        self._attr_unique_id = f"{device.address}_{self._key}"
         self._attr_device_info = DeviceInfo(
             name=name,
             connections={(dr.CONNECTION_BLUETOOTH, device.address)},

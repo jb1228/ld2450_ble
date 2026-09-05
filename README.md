@@ -15,7 +15,7 @@ This is a development fork used for testing and experimentation.
 
 A Home Assistant integration for the Hi-Link LD2450 24GHz mmWave Radar Presence Sensor over Bluetooth LE.
 
-This integration extends Home Assistant's native Bluetooth integration capabilities to fully support the LD2450 radar sensor, including all configuration options and sensor data.
+This integration extends Home Assistant's native Bluetooth integration capabilities to fully support the LD2450 radar sensor, including all configuration options and sensor data. This integration also works perfectly well using [remote Bluetooth proxies](https://www.home-assistant.io/integrations/bluetooth/#remote-adapters-bluetooth-proxies), which are both easy to setup and reliable [using ESPHome](https://esphome.io/components/bluetooth_proxy/). 
 
 ## Features
 
@@ -81,6 +81,7 @@ The integration supports automatic discovery of LD2450 devices:
     - Range: 0mm to 8000mm (forward from sensor)
   - **Y1, Y2**: Define the left and right boundaries of the zone
     - Range: -5500mm to +5500mm (negative = left, positive = right)
+
   > 💡 Coordinate Tips: 
   > - You can enter coordinates in any order (X1/X2 and Y1/Y2 are interchangeable)
   > - The ranges are consistent with the HKLRadarTool app and device firmware v2.04.23101915 (your maximum and reliable detection distances may vary)
@@ -90,6 +91,7 @@ The integration supports automatic discovery of LD2450 devices:
   - `Disabled` option will disable zone area detection
   - `Detection` mode is used to detect only targets in the zone(s) you define
   - `Filter` mode can be used to exclude those zones from detection
+
   > 💡 Note: The sensor does not allow setting the zone type for individual zones. All zones you configure will either be `Detection` zones or `Filter` zones
 - **Restart Button**: Reboot the device
 - **Factory Reset Button**: Reset all settings to factory defaults

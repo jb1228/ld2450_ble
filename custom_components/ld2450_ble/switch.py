@@ -48,7 +48,7 @@ class LD2450BLESwitch(CoordinatorEntity[LD2450BLECoordinator], SwitchEntity):
         super().__init__(coordinator)
         self._coordinator = coordinator
         self._device = device
-        self._attr_unique_id = f"{device.name}_target_mode"
+        self._attr_unique_id = f"{device.address}_target_mode"
         self._attr_device_info = DeviceInfo(
             name=name,
             connections={(dr.CONNECTION_BLUETOOTH, device.address)},

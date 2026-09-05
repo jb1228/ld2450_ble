@@ -82,7 +82,7 @@ class LD2450BLEButton(CoordinatorEntity[LD2450BLECoordinator], ButtonEntity):
         self.entity_description = description
         self._coordinator = coordinator
         self._device = device
-        self._attr_unique_id = f"{device.name}_{description.key}"
+        self._attr_unique_id = f"{device.address}_{description.key}"
         self._attr_device_info = DeviceInfo(
             name=name,
             connections={(dr.CONNECTION_BLUETOOTH, device.address)},

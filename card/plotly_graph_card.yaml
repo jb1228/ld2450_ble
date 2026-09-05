@@ -1,7 +1,10 @@
-# Source: https://community.home-assistant.io/t/screek-human-sensor-2a-ld2450-24ghz-mmwave-human-tracker-sensor/603070/41
-# Requires: https://github.com/dbuezas/lovelace-plotly-graph-card
+# Change the sensor_id value to match your sensor
 
-# Change the sensor_id to match your sensor
+
+# Source: https://community.home-assistant.io/t/screek-human-sensor-2a-ld2450-24ghz-mmwave-human-tracker-sensor/603070/41
+# Requires Plotly Graph Card: https://github.com/dbuezas/lovelace-plotly-graph-card
+
+
 
 grid_options:
   columns: full
@@ -16,7 +19,16 @@ config:
   displaylogo: false
 entities:
   - entity: ""
-    fn_var1: $ex vars.sensor_id = "my_ld2450";
+    custom_js: |-
+      $ex vars.sensor_id = "my_ld2450";
+
+      vars.get_entity_id = function(domain, id) { 
+        return domain + "." + vars.sensor_id + "_" + id; 
+      };
+
+      vars.get_entity = function(domain, id) { 
+        return hass.states[vars.get_entity_id(domain,id)]; 
+      };
     fn_var2: $ex vars.sensor_name_prefix = "sensor." + vars.sensor_id + "_";
     fn_var3: $ex vars.number_name_prefix = "number." + vars.sensor_id + "_";
     fn_var4: >-
@@ -28,6 +40,7 @@ entities:
     fn_var6: >-
       $ex vars.device_name = hass.devices[vars.device_id].name_by_user ||
       hass.devices[vars.device_id].name;
+
   - entity: ""
     name: Target 1
     marker:
