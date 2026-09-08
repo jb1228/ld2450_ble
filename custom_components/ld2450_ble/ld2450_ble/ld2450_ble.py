@@ -3,20 +3,16 @@ from __future__ import annotations
 import asyncio
 import logging
 import re
-import sys
 from collections.abc import Callable
-from typing import Any, TypeVar
+from contextlib import suppress
 
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
-from bleak.exc import BleakDBusError
 from bleak_retry_connector import BLEAK_RETRY_EXCEPTIONS as BLEAK_EXCEPTIONS
 from bleak_retry_connector import (
     BleakClientWithServiceCache,
     BleakError,
-    BleakNotFoundError,
     establish_connection,
-    retry_bluetooth_connection_error,
 )
 
 #CONSTANTS FROM CONST FILE
@@ -48,21 +44,20 @@ from .const import (
     ACK_FACTORY_RESET_REGEX,
     frame_regex
     )
-from .exceptions import CharacteristicMissingError
 from .models import LD2450BLEState, LD2450BLEConfig
 
-BLEAK_BACKOFF_TIME = 0.25
+# Write-without-response only queues data on an ESPHome proxy. Give the
+# controller time to transmit before submitting the next command.
+COMMAND_INTERVAL = 0.1
+COMMAND_ATTEMPTS = 3
+RECONNECT_DELAY = 1.0
+RECONNECT_MAX_DELAY = 30.0
+REBOOT_DELAY = 5.0
+CONNECTION_ERRORS = (BleakError, OSError, EOFError)
 
 __version__ = "0.0.0"
 
-
-WrapFuncType = TypeVar("WrapFuncType", bound=Callable[..., Any])
-
-RETRY_BACKOFF_EXCEPTIONS = (BleakDBusError,)
-
 _LOGGER = logging.getLogger(__name__)
-
-DEFAULT_ATTEMPTS = sys.maxsize
 
 
 class LD2450BLE:
@@ -80,10 +75,15 @@ class LD2450BLE:
         self._connect_lock: asyncio.Lock = asyncio.Lock()
         self._client: BleakClientWithServiceCache | None = None
         self._expected_disconnect = False
+        self._stopped = False
+        self._reconnect_enabled = False
+        self._reconnect_task: asyncio.Task[None] | None = None
+        self._initialized_client: BleakClientWithServiceCache | None = None
         self.loop = asyncio.get_running_loop()
         self._callbacks: list[Callable[[LD2450BLEState, LD2450BLEConfig], None]] = []
         self._disconnected_callbacks: list[Callable[[], None]] = []
         self._buf = b""
+        self._received_data = False
 
     def set_ble_device_and_advertisement_data(
         self, ble_device: BLEDevice, advertisement_data: AdvertisementData
@@ -210,9 +210,20 @@ class LD2450BLE:
         return self._config.zone_3_y2
 
     async def stop(self) -> None:
-        """Stop the LD2410BLE."""
+        """Stop recovery and release the Bluetooth connection."""
         _LOGGER.debug("%s: Stop", self.name)
-        await self._execute_disconnect()
+        self._stopped = True
+        await self._cancel_reconnect()
+        async with self._operation_lock:
+            await self._execute_disconnect()
+
+    async def _cancel_reconnect(self) -> None:
+        task = self._reconnect_task
+        self._reconnect_task = None
+        if task is not None and task is not asyncio.current_task():
+            task.cancel()
+            with suppress(asyncio.CancelledError):
+                await task
 
     def _fire_callbacks(self) -> None:
         """Fire the callbacks."""
@@ -248,38 +259,34 @@ class LD2450BLE:
         return unregister_callback
 
     async def initialise(self) -> None:
-        await self._ensure_connected()
-
-        _LOGGER.debug("%s: Subscribe to notifications; RSSI: %s", self.name, self.rssi)
-        if self._client is not None:
-            _LOGGER.debug(self._client)
-        
-            await self._client.start_notify(
-                CHARACTERISTIC_NOTIFY, self._notification_handler
+        """Subscribe and fetch startup settings as one serialized operation."""
+        async with self._operation_lock:
+            if self._stopped:
+                raise BleakError("LD2450 device has been stopped")
+            if (
+                self._client is not None
+                and self._client.is_connected
+                and self._initialized_client is self._client
+            ):
+                return
+            await self._send_command_locked(
+                [
+                    CMD_ENABLE_CONFIG, CMD_QUERY_TARGET_MODE, CMD_DISABLE_CONFIG,
+                    CMD_ENABLE_CONFIG, CMD_GET_FW_VER, CMD_DISABLE_CONFIG,
+                    CMD_ENABLE_CONFIG, CMD_GET_MAC, CMD_DISABLE_CONFIG,
+                    CMD_ENABLE_CONFIG, CMD_ZONE, CMD_DISABLE_CONFIG,
+                ]
             )
-            
-            #get startup values from sensor
-            await self._get_target_mode()
-            await self._get_fw_ver()
-            await self._get_mac()
-            await self._get_zone()
-           
-        else:
-            _LOGGER.debug("Client is unexpectedly None")
+            self._initialized_client = self._client
+            self._reconnect_enabled = True
+            _LOGGER.debug("%s: Startup commands sent; awaiting sensor updates", self.name)
 
     async def _ensure_connected(self) -> None:
-        """Ensure connection to device is established."""
-        if self._connect_lock.locked():
-            _LOGGER.debug(
-                "%s: Connection already in progress, waiting for it to complete; RSSI: %s",
-                self.name,
-                self.rssi,
-            )
-        if self._client and self._client.is_connected:
-            return
+        """Establish a connection and restore notifications before any writes."""
         async with self._connect_lock:
-            # Check again while holding the lock
-            if self._client and self._client.is_connected:
+            if self._stopped:
+                raise BleakError("LD2450 device has been stopped")
+            if self._client is not None and self._client.is_connected:
                 return
             _LOGGER.debug("%s: Connecting; RSSI: %s", self.name, self.rssi)
             client = await establish_connection(
@@ -290,22 +297,47 @@ class LD2450BLE:
                 use_services_cache=True,
                 ble_device_callback=lambda: self._ble_device,
             )
-            _LOGGER.debug("%s: Connected; RSSI: %s", self.name, self.rssi)
-
             self._client = client
+            self._expected_disconnect = False
+            self._initialized_client = None
+            self._buf = b""
+            self._received_data = False
+            if self._stopped or not client.is_connected:
+                raise BleakError("LD2450 connection closed during setup")
+            _LOGGER.debug("%s: Connected; subscribing to notifications", self.name)
+            await client.start_notify(CHARACTERISTIC_NOTIFY, self._notification_handler)
 
-    async def _reconnect(self) -> None:
-        """Attempt a reconnect"""
-        _LOGGER.debug("ensuring connection")
+    def _schedule_reconnect(self, delay: float = RECONNECT_DELAY) -> None:
+        """Keep one recovery task per device, only after successful setup."""
+        if self._stopped or not self._reconnect_enabled:
+            return
+        if self._reconnect_task is not None and not self._reconnect_task.done():
+            return
+        self._reconnect_task = self.loop.create_task(self._reconnect(delay))
+
+    async def _reconnect(self, delay: float = RECONNECT_DELAY) -> None:
+        """Retry connection and initialization with bounded backoff."""
         try:
-            await self._ensure_connected()
-            _LOGGER.debug("ensured connection - initialising")
-            await self.initialise()
-        except BleakNotFoundError:
-            _LOGGER.debug("failed to ensure connection - backing off")
-            await asyncio.sleep(BLEAK_BACKOFF_TIME)
-            _LOGGER.debug("reconnecting again")
-            asyncio.create_task(self._reconnect())
+            while not self._stopped:
+                _LOGGER.debug("%s: Reconnecting in %.1fs", self.name, delay)
+                await asyncio.sleep(delay)
+                try:
+                    await self.initialise()
+                except CONNECTION_ERRORS as ex:
+                    if self._stopped:
+                        return
+                    _LOGGER.warning("%s: Reinitialization failed: %s", self.name, ex)
+                    delay = min(delay * 2, RECONNECT_MAX_DELAY)
+                else:
+                    _LOGGER.info("%s: BLE connection restored; startup commands sent", self.name)
+                    return
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            _LOGGER.exception("%s: Unexpected error during Bluetooth recovery", self.name)
+        finally:
+            if self._reconnect_task is asyncio.current_task():
+                self._reconnect_task = None
 
     def intify(self, state: bytes) -> int:
         return int.from_bytes(state, byteorder="little")
@@ -589,6 +621,9 @@ class LD2450BLE:
                 target_3_resolution = target_3_resolution,
             )
             msg = None            
+            if not self._received_data:
+                self._received_data = True
+                _LOGGER.info("%s: Receiving radar target updates", self.name)
             self._fire_callbacks()
 
         _LOGGER.debug(
@@ -600,198 +635,141 @@ class LD2450BLE:
         )
 
     def _disconnected(self, client: BleakClientWithServiceCache) -> None:
-        """Disconnected callback."""
+        """Ignore old sessions and recover an unexpected disconnection."""
+        if client is not self._client:
+            return
+        self._client = None
+        self._initialized_client = None
+        self._buf = b""
         self._fire_disconnected_callbacks()
-        if self._expected_disconnect:
-            _LOGGER.debug(
-                "%s: Disconnected from device; RSSI: %s", self.name, self.rssi
-            )
+        if self._stopped or self._expected_disconnect:
             return
         _LOGGER.warning(
-            "%s: Device unexpectedly disconnected; RSSI: %s",
-            self.name,
-            self.rssi,
+            "%s: Device unexpectedly disconnected; RSSI: %s", self.name, self.rssi
         )
-        asyncio.create_task(self._reconnect())
-
-    def _disconnect(self) -> None:
-        """Disconnect from device."""
-        asyncio.create_task(self._execute_timed_disconnect())
-
-    async def _execute_timed_disconnect(self) -> None:
-        """Execute timed disconnection."""
-        _LOGGER.debug(
-            "%s: Disconnecting",
-            self.name,
-        )
-        await self._execute_disconnect()
+        self._schedule_reconnect()
 
     async def _execute_disconnect(self) -> None:
-        """Execute disconnection."""
+        """Clear local state and attempt to close even if stop_notify fails."""
         async with self._connect_lock:
             client = self._client
             self._expected_disconnect = True
             self._client = None
-            if client and client.is_connected:
-                await client.stop_notify(CHARACTERISTIC_NOTIFY)
-                await client.disconnect()
-
-    @retry_bluetooth_connection_error(DEFAULT_ATTEMPTS)
-    async def _send_command_locked(self, commands: list[bytes]) -> None:
-        """Send command to device and read response."""
-        try:
-            await self._execute_command_locked(commands)
-        except BleakDBusError as ex:
-            # Disconnect so we can reset state and try again
-            await asyncio.sleep(BLEAK_BACKOFF_TIME)
-            _LOGGER.debug(
-                "%s: RSSI: %s; Backing off %ss; Disconnecting due to error: %s",
-                self.name,
-                self.rssi,
-                BLEAK_BACKOFF_TIME,
-                ex,
-            )
-            await self._execute_disconnect()
-            raise
-        except BleakError as ex:
-            # Disconnect so we can reset state and try again
-            _LOGGER.debug(
-                "%s: RSSI: %s; Disconnecting due to error: %s", self.name, self.rssi, ex
-            )
-            await self._execute_disconnect()
-            raise
-
-    async def _send_command(
-        self, commands: list[bytes] | bytes, retry: int | None = None
-    ) -> None:
-        """Send command to device and read response."""
-        await self._ensure_connected()
-        if not isinstance(commands, list):
-            commands = [commands]
-        await self._send_command_while_connected(commands, retry)
-
-    async def _send_command_while_connected(
-        self, commands: list[bytes], retry: int | None = None
-    ) -> None:
-        """Send command to device and read response."""
-        _LOGGER.debug(
-            "%s: Sending commands %s",
-            self.name,
-            [command.hex() for command in commands],
-        )
-        if self._operation_lock.locked():
-            _LOGGER.debug(
-                "%s: Operation already in progress, waiting for it to complete; RSSI: %s",
-                self.name,
-                self.rssi,
-            )
-        async with self._operation_lock:
-            try:
-                await self._send_command_locked(commands)
+            self._initialized_client = None
+            self._buf = b""
+            if client is None:
                 return
-            except BleakNotFoundError:
-                _LOGGER.error(
-                    "%s: device not found, no longer in range, or poor RSSI: %s",
-                    self.name,
-                    self.rssi,
-                    exc_info=True,
+            self._fire_disconnected_callbacks()
+            if client.is_connected:
+                try:
+                    await client.stop_notify(CHARACTERISTIC_NOTIFY)
+                except CONNECTION_ERRORS as ex:
+                    _LOGGER.debug("%s: Could not stop notifications: %s", self.name, ex)
+                finally:
+                    try:
+                        await client.disconnect()
+                    except CONNECTION_ERRORS as ex:
+                        _LOGGER.warning("%s: Could not close BLE connection: %s", self.name, ex)
+
+    async def _send_command_locked(
+        self,
+        commands: list[bytes],
+        attempts: int = COMMAND_ATTEMPTS,
+        *,
+        expect_disconnect: bool = False,
+    ) -> None:
+        """Reconnect and retry the whole transaction, never a detached write."""
+        for attempt in range(1, attempts + 1):
+            if self._stopped:
+                raise BleakError("LD2450 device has been stopped")
+            try:
+                await self._ensure_connected()
+                await self._execute_command_locked(
+                    commands, expect_disconnect=expect_disconnect
                 )
+                return
+            except asyncio.CancelledError:
+                await self._execute_disconnect()
                 raise
-            except CharacteristicMissingError as ex:
-                _LOGGER.debug(
-                    "%s: characteristic missing: %s; RSSI: %s",
-                    self.name,
-                    ex,
-                    self.rssi,
-                    exc_info=True,
+            except CONNECTION_ERRORS as ex:
+                _LOGGER.warning(
+                    "%s: BLE command attempt %d/%d failed: %s",
+                    self.name, attempt, attempts, ex,
                 )
-                raise
-            except BLEAK_EXCEPTIONS:
-                _LOGGER.debug("%s: communication failed", self.name, exc_info=True)
-                raise
+                await self._execute_disconnect()
+                if self._stopped or attempt == attempts:
+                    if not expect_disconnect:
+                        self._schedule_reconnect()
+                    raise
+                await asyncio.sleep(
+                    min(RECONNECT_DELAY * 2 ** (attempt - 1), RECONNECT_MAX_DELAY)
+                )
 
-        raise RuntimeError("Unreachable")
+    async def _send_command(self, commands: list[bytes] | bytes) -> None:
+        """Keep configuration entry, operation, and exit together."""
+        if isinstance(commands, bytes):
+            commands = [commands]
+        async with self._operation_lock:
+            await self._send_command_locked(commands)
 
-    async def _execute_command_locked(self, commands: list[bytes]) -> None:
-        """Execute command and read response."""
-        assert self._client is not None  # nosec
-        for command in commands:
-            await self._client.write_gatt_char(CHARACTERISTIC_WRITE, command, False)          
+    async def _execute_command_locked(
+        self, commands: list[bytes], *, expect_disconnect: bool = False
+    ) -> None:
+        """Pace writes without changing the radar's write-without-response mode."""
+        client = self._client
+        for index, command in enumerate(commands):
+            if (
+                self._stopped
+                or client is None
+                or client is not self._client
+                or not client.is_connected
+            ):
+                raise BleakError("LD2450 disconnected during command transaction")
+            last_command = index == len(commands) - 1
+            if expect_disconnect and last_command:
+                self._expected_disconnect = True
+            await client.write_gatt_char(CHARACTERISTIC_WRITE, command, response=False)
+            await asyncio.sleep(COMMAND_INTERVAL)
+            if not (expect_disconnect and last_command):
+                if client is not self._client or not client.is_connected:
+                    raise BleakError("LD2450 disconnected during command transaction")
 
-    #sensor commands
+    # Sensor commands are complete configuration transactions so concurrent
+    # entity actions and retries cannot interleave or lose config mode.
     async def _get_target_mode(self) -> None:
-        """Execute command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_QUERY_TARGET_MODE)
-        await self._send_command(CMD_DISABLE_CONFIG)
-            
+        await self._send_command([CMD_ENABLE_CONFIG, CMD_QUERY_TARGET_MODE, CMD_DISABLE_CONFIG])
+
     async def _get_fw_ver(self) -> None:
-        """Execute command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_GET_FW_VER)
-        await self._send_command(CMD_DISABLE_CONFIG)
+        await self._send_command([CMD_ENABLE_CONFIG, CMD_GET_FW_VER, CMD_DISABLE_CONFIG])
 
     async def _get_mac(self) -> None:
-        """Execute command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_GET_MAC)
-        await self._send_command(CMD_DISABLE_CONFIG)
+        await self._send_command([CMD_ENABLE_CONFIG, CMD_GET_MAC, CMD_DISABLE_CONFIG])
 
     async def _get_zone(self) -> None:
-        """Query zone config."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_ZONE)
-        await self._send_command(CMD_DISABLE_CONFIG)
+        await self._send_command([CMD_ENABLE_CONFIG, CMD_ZONE, CMD_DISABLE_CONFIG])
 
     async def _reboot(self) -> None:
-        """Execute reboot command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_REBOOT)
-        await self._send_command(CMD_DISABLE_CONFIG)
-        # Device will reboot and disconnect, schedule reconnection
-        await self._schedule_reconnect_after_reboot()
+        await self._send_restart_command(CMD_REBOOT)
 
     async def _factory_reset(self) -> None:
-        """Execute factory reset command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_FACTORY_RESET)
-        await self._send_command(CMD_DISABLE_CONFIG)
-        # Device will factory reset and reboot, schedule reconnection
-        await self._schedule_reconnect_after_reboot()
+        await self._send_restart_command(CMD_FACTORY_RESET)
 
-    async def _schedule_reconnect_after_reboot(self) -> None:
-        """Schedule reconnection after device reboot with appropriate delay."""
-        
-        async def delayed_reconnect():
-            # Wait for device to complete reboot (typically 3-5 seconds)
-            await asyncio.sleep(5)
-            # Reset expected disconnect flag to allow reconnection
-            self._expected_disconnect = False
-            # Attempt reconnection
-            _LOGGER.debug("Initiating reconnection after reboot")
-            await self._reconnect()
-        
-        # Start the delayed reconnection task
-        asyncio.create_task(delayed_reconnect())
+    async def _send_restart_command(self, command: bytes) -> None:
+        """Do not replay a restart or send config-exit to a rebooting radar."""
+        await self._cancel_reconnect()
+        async with self._operation_lock:
+            try:
+                await self._send_command_locked(
+                    [CMD_ENABLE_CONFIG, command], attempts=1, expect_disconnect=True
+                )
+            finally:
+                await self._execute_disconnect()
+                self._schedule_reconnect(REBOOT_DELAY)
 
     async def _set_target_mode(self, mode: int) -> None:
-        """Execute command."""
-        if mode in [1,2]:
-            assert self._client is not None  # nosec
-            await self._send_command(CMD_ENABLE_CONFIG)
-            if mode == 1:
-                #single target mode
-                await self._send_command(CMD_ENABLE_SINGLE_TARGET)
-            else:
-                #multi target mode
-                await self._send_command(CMD_ENABLE_MULTI_TARGET)
-            await self._send_command(CMD_DISABLE_CONFIG)
+        if mode in (1, 2):
+            command = CMD_ENABLE_SINGLE_TARGET if mode == 1 else CMD_ENABLE_MULTI_TARGET
+            await self._send_command([CMD_ENABLE_CONFIG, command, CMD_DISABLE_CONFIG])
 
     async def _set_zone(self, zone_type: int, 
         zone_1_x1: int | 0, 
@@ -807,9 +785,7 @@ class LD2450BLE:
         zone_3_x2: int | 0, 
         zone_3_y2: int | 0) -> None:
         """Execute command."""
-        assert self._client is not None  # nosec
-        await self._send_command(CMD_ENABLE_CONFIG)
-        await self._send_command(CMD_SET_ZONE_PRE + 
+        await self._send_command([CMD_ENABLE_CONFIG, CMD_SET_ZONE_PRE +
             zone_type.to_bytes(2,"little") + 
             self._num2hex(zone_1_x1) + 
             self._num2hex(zone_1_y1) + 
@@ -823,8 +799,7 @@ class LD2450BLE:
             self._num2hex(zone_3_y1) + 
             self._num2hex(zone_3_x2) + 
             self._num2hex(zone_3_y2) +
-            CMD_SET_ZONE_POST)
-        await self._send_command(CMD_DISABLE_CONFIG)
+            CMD_SET_ZONE_POST, CMD_DISABLE_CONFIG])
             
     def _num2hex(self, num: int) -> bytes:
         return num.to_bytes(2, byteorder='little', signed=True)

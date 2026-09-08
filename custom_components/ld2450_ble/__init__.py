@@ -3,11 +3,10 @@
 import logging
 
 from bleak_retry_connector import (
-    BleakError,
     close_stale_connections_by_address,
     get_device,
 )
-from .ld2450_ble import LD2450BLE
+from .ld2450_ble import BLEAK_EXCEPTIONS, LD2450BLE
 
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth.match import ADDRESS, BluetoothCallbackMatcher
@@ -44,10 +43,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         await ld2450_ble.initialise()
-    except BleakError as exc:
+    except BLEAK_EXCEPTIONS as exc:
+        await ld2450_ble.stop()
+        await coordinator.async_shutdown()
         raise ConfigEntryNotReady(
             f"Could not initialise LD2450 device with address {address}"
         ) from exc
+    except BaseException:
+        # A cancelled or failed setup must not retain a live BLE session.
+        await ld2450_ble.stop()
+        await coordinator.async_shutdown()
+        raise
 
     @callback
     def _async_update_ble(

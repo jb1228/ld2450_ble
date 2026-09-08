@@ -115,13 +115,15 @@ class Ld2450BleConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected error")
                 errors["base"] = "unknown"
             else:
-                await ld2450_ble.stop()
                 return self.async_create_entry(
                     title=local_name,
                     data={
                         CONF_ADDRESS: discovery_info.address,
                     },
                 )
+            finally:
+                # Release the discovery probe on success, failure, or cancellation.
+                await ld2450_ble.stop()
 
         if discovery := self._discovery_info:
             self._discovered_devices[discovery.address] = discovery
