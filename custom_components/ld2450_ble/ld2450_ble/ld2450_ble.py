@@ -118,6 +118,43 @@ class LD2450BLE:
         """Return the config."""
         return self._config
 
+    def get_target_counts(self, zone: int | None = None) -> dict[str, int]:
+        """Count reported targets using ESPHome's LD2450 counting rules.
+
+        Zone bounds are strict and are not reordered. Zone mode is applied by
+        the radar to its reports, not by this calculation. Like ESPHome, empty
+        slots are at (0, 0) and still; keep the zone's lower Y bound at least 0
+        so they cannot fall strictly inside the rectangle.
+        """
+        state = self._state
+        config = self._config
+        if zone is not None:
+            if zone not in (1, 2, 3):
+                raise ValueError("Zone must be 1, 2, or 3")
+            x1 = getattr(config, f"zone_{zone}_x1")
+            y1 = getattr(config, f"zone_{zone}_y1")
+            x2 = getattr(config, f"zone_{zone}_x2")
+            y2 = getattr(config, f"zone_{zone}_y2")
+
+        total = moving = 0
+        for target in (1, 2, 3):
+            x = getattr(state, f"target_{target}_x")
+            y = getattr(state, f"target_{target}_y")
+            speed = getattr(state, f"target_{target}_speed")
+            present = x != 0 or y != 0
+            if zone is None:
+                total += int(present)
+                moving += int(speed != 0)
+            elif x1 < x < x2 and y1 < y < y2:
+                total += 1
+                moving += int(present and speed != 0)
+
+        return {
+            "target_count": total,
+            "moving_target_count": moving,
+            "still_target_count": total - moving,
+        }
+
     @property
     def target_1_x(self) -> int:
         return self._state.target_1_x
@@ -554,51 +591,51 @@ class LD2450BLE:
             self._buf = self._buf[msg.end() :]  # noqa: E203
 
             target_1_x = int.from_bytes(msg.group("target_1_x"),"little")
-            if target_1_x > 2**15:
+            if target_1_x >= 2**15:
                 target_1_x = target_1_x - 2**15
             else:
                 target_1_x = - target_1_x
             target_1_y = int.from_bytes(msg.group("target_1_y"),"little")
-            if target_1_y > 2**15:
+            if target_1_y >= 2**15:
                 target_1_y = target_1_y - 2**15
             else:
                 target_1_y = - target_1_y
             target_1_speed = int.from_bytes(msg.group("target_1_s"),"little")
-            if target_1_speed > 2**15:
+            if target_1_speed >= 2**15:
                 target_1_speed = target_1_speed - 2**15
             else:
                 target_1_speed = - target_1_speed
             target_1_resolution = int.from_bytes(msg.group("target_1_r"),"little")
 
             target_2_x = int.from_bytes(msg.group("target_2_x"),"little")
-            if target_2_x > 2**15:
+            if target_2_x >= 2**15:
                 target_2_x = target_2_x - 2**15
             else:
                 target_2_x = - target_2_x
             target_2_y = int.from_bytes(msg.group("target_2_y"),"little")
-            if target_2_y > 2**15:
+            if target_2_y >= 2**15:
                 target_2_y = target_2_y - 2**15
             else:
                 target_2_y = - target_2_y
             target_2_speed = int.from_bytes(msg.group("target_2_s"),"little")
-            if target_2_speed > 2**15:
+            if target_2_speed >= 2**15:
                 target_2_speed = target_2_speed - 2**15
             else:
                 target_2_speed = - target_2_speed
             target_2_resolution = int.from_bytes(msg.group("target_2_r"),"little")
 
             target_3_x = int.from_bytes(msg.group("target_3_x"),"little")
-            if target_3_x > 2**15:
+            if target_3_x >= 2**15:
                 target_3_x = target_3_x - 2**15
             else:
                 target_3_x = - target_3_x
             target_3_y = int.from_bytes(msg.group("target_3_y"),"little")
-            if target_3_y > 2**15:
+            if target_3_y >= 2**15:
                 target_3_y = target_3_y - 2**15
             else:
                 target_3_y = - target_3_y
             target_3_speed = int.from_bytes(msg.group("target_3_s"),"little")
-            if target_3_speed > 2**15:
+            if target_3_speed >= 2**15:
                 target_3_speed = target_3_speed - 2**15
             else:
                 target_3_speed = - target_3_speed

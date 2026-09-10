@@ -66,6 +66,18 @@ The integration supports automatic discovery of LD2450 devices:
 - **Target Angle**: Calculated angle from sensor
 - **Target Direction**: Movement direction (Stationary, Moving away, Approaching, NA)
 - **Target Resolution**: Detection resolution for each target
+- **Target Counts**: Overall presence, moving, and still target counts
+- **Zone Target Counts**: All, moving, and still target counts for each of zones 1–3, enabled and visible by default
+
+Counts follow [ESPHome's LD2450 calculation](https://api-docs.esphome.io/ld2450_8cpp_source):
+any nonzero speed is moving, and zero speed is still. Zone counts use the
+configured radar coordinates with strict bounds (`X1 < X < X2`, `Y1 < Y < Y2`),
+so targets on an edge are excluded. Overlapping zones count targets independently.
+Counts reflect the latest reported targets without a presence timeout; the radar
+applies Detection/Filter mode before reporting targets. Disabled zone mode does
+not disable these local calculations. Zero-size or reversed rectangles count zero.
+As in ESPHome, keep Y1 at least zero: a rectangle containing the origin strictly
+inside it can count empty target slots as still targets.
 
 ### Binary Sensors
 - **Presence**: Overall presence detection
@@ -83,7 +95,7 @@ The integration supports automatic discovery of LD2450 devices:
     - Range: -5500mm to +5500mm (negative = left, positive = right)
 
   > 💡 Coordinate Tips: 
-  > - You can enter coordinates in any order (X1/X2 and Y1/Y2 are interchangeable)
+  > - For zone counts, use X1 < X2 and Y1 < Y2; bounds are not automatically reordered
   > - The ranges are consistent with the HKLRadarTool app and device firmware v2.04.23101915 (your maximum and reliable detection distances may vary)
   > - Although this sensor is almost always depicted in a landscape orientation (even on the [official site and documetation](https://www.hlktech.net/index.php?id=1157)), it is indeed designed to be mounted in a **portrait** orientation
   > - If you are using the sensor in landscape, you will need to swap the X and Y coordinates

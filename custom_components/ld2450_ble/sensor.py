@@ -223,6 +223,26 @@ TARGET_3_DIRECTION_DESCRIPTION = SensorEntityDescription(
 )
 
 
+TARGET_COUNT_SENSORS = {
+    f"{prefix}{count_type}": (zone, count_type)
+    for zone, prefix in ((None, ""), (1, "zone_1_"), (2, "zone_2_"), (3, "zone_3_"))
+    for count_type in ("target_count", "moving_target_count", "still_target_count")
+}
+
+TARGET_COUNT_DESCRIPTIONS = [
+    SensorEntityDescription(
+        key=key,
+        translation_key=key,
+        entity_registry_enabled_default=True,
+        entity_registry_visible_default=True,
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
+        icon="mdi:map-marker" if zone is not None else "mdi:account-multiple",
+    )
+    for key, (zone, _) in TARGET_COUNT_SENSORS.items()
+]
+
+
 SENSOR_DESCRIPTIONS = (
     [
         TARGET_1_X_DESCRIPTION,
@@ -250,7 +270,8 @@ SENSOR_DESCRIPTIONS = (
 
         TARGET_1_DIRECTION_DESCRIPTION,
         TARGET_2_DIRECTION_DESCRIPTION,
-        TARGET_3_DIRECTION_DESCRIPTION        
+        TARGET_3_DIRECTION_DESCRIPTION,
+        *TARGET_COUNT_DESCRIPTIONS,
     ]
 )
 
@@ -305,6 +326,9 @@ class LD2450BLESensor(CoordinatorEntity[LD2450BLECoordinator], SensorEntity):
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
         match self._key:
+            case key if key in TARGET_COUNT_SENSORS:
+                zone, count_type = TARGET_COUNT_SENSORS[key]
+                self._attr_native_value = self._device.get_target_counts(zone)[count_type]
             case "target_1_distance":
                 self._attr_native_value = int(math.hypot(getattr(self._device, "target_1_x"), getattr(self._device, "target_1_y")))
             case "target_2_distance":
@@ -346,11 +370,11 @@ class LD2450BLESensor(CoordinatorEntity[LD2450BLECoordinator], SensorEntity):
         
         # Determine direction based on speed
         # Speed is in cm/s, positive values mean moving away, negative approaching
-        if abs(speed) <= 1:  # Consider speeds <= 1 cm/s as stationary
+        if speed == 0:
             return "Stationary"
-        elif speed > 1:
+        elif speed > 0:
             return "Moving away"
-        elif speed < -1:
+        elif speed < 0:
             return "Approaching"
         else:
             return "NA"

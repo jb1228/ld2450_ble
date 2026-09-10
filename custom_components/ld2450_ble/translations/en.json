@@ -21,6 +21,42 @@
   },
   "entity": {
     "sensor": {
+      "target_count": {
+        "name": "Presence Target Count"
+      },
+      "moving_target_count": {
+        "name": "Moving Target Count"
+      },
+      "still_target_count": {
+        "name": "Still Target Count"
+      },
+      "zone_1_target_count": {
+        "name": "Zone 1 All Target Count"
+      },
+      "zone_1_moving_target_count": {
+        "name": "Zone 1 Moving Target Count"
+      },
+      "zone_1_still_target_count": {
+        "name": "Zone 1 Still Target Count"
+      },
+      "zone_2_target_count": {
+        "name": "Zone 2 All Target Count"
+      },
+      "zone_2_moving_target_count": {
+        "name": "Zone 2 Moving Target Count"
+      },
+      "zone_2_still_target_count": {
+        "name": "Zone 2 Still Target Count"
+      },
+      "zone_3_target_count": {
+        "name": "Zone 3 All Target Count"
+      },
+      "zone_3_moving_target_count": {
+        "name": "Zone 3 Moving Target Count"
+      },
+      "zone_3_still_target_count": {
+        "name": "Zone 3 Still Target Count"
+      },
       "target_1_x": {
         "name": "Target 1 X"
       },
